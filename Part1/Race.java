@@ -67,6 +67,7 @@ public class Race
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         Horse winner = null;
+        Horse[] laneHorse = {lane1Horse, lane2Horse, lane3Horse};
         
         //reset all the lanes (all horses not fallen and back to 0). 
         lane1Horse.goBackToStart();
@@ -97,6 +98,10 @@ public class Race
                 }
                 finished = true;
             }
+
+            if (horsesFallen(laneHorse)){
+                finished = true;
+            }
            
             //wait for 100 milliseconds
             try{ 
@@ -106,7 +111,38 @@ public class Race
         if (winner != null){
             System.out.println("And the Winner is... "+winner.getName()+" !");
         }
+        else{
+            Horse furthest = null;
+            for (int i = 0; i < laneHorse.length; i++) {
+                if (laneHorse[i] != null){
+                    furthest = laneHorse[i];
+                    break;
+                }
+            }
+            //finds furthest travelled horse
+            for (int i = 1; i < laneHorse.length; i++) {
+                Horse currentHorse = laneHorse[i];
+                if (currentHorse != null && currentHorse.getDistanceTravelled() > furthest.getDistanceTravelled()) {
+                    furthest = laneHorse[i];
+                }
+            }
+            System.out.println("All Horses have fallen");
+            System.out.println(furthest.getName() + " has made it the furthest and therefore wins");
+        }
     }
+
+    private boolean horsesFallen(Horse[] all){
+        int fallenAmount = 0;
+
+        for (Horse horse : all) {
+            if (horse == null || horse.hasFallen()) {
+                fallenAmount++;
+            }
+        }
+
+        return (fallenAmount == all.length);
+    }
+    
     
     /**
      * Randomly make a horse move forward or fall depending
