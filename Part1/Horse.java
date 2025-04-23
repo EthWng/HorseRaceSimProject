@@ -57,7 +57,7 @@ public class Horse
     
     public void goBackToStart()
     {
-        this.distance++;
+        this.distance = 0;
     }
     
     public boolean hasFallen()
