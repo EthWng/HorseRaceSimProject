@@ -18,13 +18,12 @@ public class Horse
     /**
      * Constructor for objects of class Horse
      */
-    //Constructor of class Horse
-    /**
-     * Constructor for objects of class Horse
-     */
     public Horse(char horseSymbol, String horseName, double horseConfidence)
     {
-       
+        this.symbol = horseSymbol;
+        this.name = horseName;
+        this.confidence = horseConfidence;
+        this.flag = false;
     }
     
     //Other methods of class Horse
@@ -35,22 +34,22 @@ public class Horse
     
     public double getConfidence()
     {
-        
+        return this.confidence;
     }
     
     public int getDistanceTravelled()
     {
-        
+        return this.distance;
     }
     
     public String getName()
     {
-        
+        return this.name;        
     }
     
     public char getSymbol()
     {
-        
+        return this.symbol;
     }
     
     public void goBackToStart()
@@ -70,11 +69,11 @@ public class Horse
 
     public void setConfidence(double newConfidence)
     {
-        
+        this.confidence = newConfidence;
     }
     
     public void setSymbol(char newSymbol)
     {
-        
+        this.symbol = newSymbol;
     }
 }
