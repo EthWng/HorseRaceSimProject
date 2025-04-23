@@ -16,6 +16,7 @@ public class Race
     private Horse lane2Horse;
     private Horse lane3Horse;
 
+
     /**
      * Constructor for objects of class Race
      * Initially there are no horses in the lanes
@@ -31,6 +32,7 @@ public class Race
         lane3Horse = null;
     }
     
+
     /**
      * Adds a horse to the race in a given lane
      * 
@@ -39,6 +41,7 @@ public class Race
      */
     public void addHorse(Horse theHorse, int laneNumber)
     {
+
         if (laneNumber == 1)
         {
             lane1Horse = theHorse;
@@ -57,6 +60,7 @@ public class Race
         }
     }
     
+
     /**
      * Start the race
      * The horse are brought to the start and
@@ -67,15 +71,15 @@ public class Race
     {
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
-        ArrayList<Horse> winners = new ArrayList<Horse>();
-        String connective = " ";
-        Horse[] laneHorse = {lane1Horse, lane2Horse, lane3Horse};
-        int nullHorses = laneHorse.length;
+        ArrayList<Horse> winners = new ArrayList<Horse>();//holds the winners of the race
+        String connective = " ";//variable changed depending on amount of winners
+        Horse[] laneHorse = {lane1Horse, lane2Horse, lane3Horse};//var containing all horses
+        int nullHorses = laneHorse.length;//contains the max possible null horses
         
         //reset all the lanes (all horses not fallen and back to 0). 
         if (lane1Horse != null){
             lane1Horse.goBackToStart();
-            nullHorses--;
+            nullHorses--;//if its not null counter goes down
         }
         if (lane2Horse != null){
             lane2Horse.goBackToStart();
@@ -120,6 +124,7 @@ public class Race
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
         }
+        
         if (finished){
             if (winners.size() == 0){
                 Horse furthest = null;
@@ -154,6 +159,15 @@ public class Race
         }
     }
 
+
+    /**
+     *checks if all horses have fallen
+     *returns false if there are horses still up
+     *if all but one horse has fell the horse wins
+     * 
+     * 
+     * @param all array containing all the horses in the race
+     */
     private boolean horsesFallen(Horse[] all){
         int fallenAmount = 0;
 
@@ -195,7 +209,8 @@ public class Race
             }
         }
     }
-        
+       
+    
     /** 
      * Determines if a horse has won the race
      *
@@ -214,6 +229,7 @@ public class Race
         }
     }
     
+
     /***
      * Print the race on the terminal
      */
@@ -237,6 +253,7 @@ public class Race
         System.out.println();    
     }
     
+
     /**
      * print a horse's lane during the race
      * for example
@@ -282,7 +299,7 @@ public class Race
         }
     }
         
-    
+
     /***
      * print a character a given number of times.
      * e.g. printmany('x',5) will print: xxxxx
