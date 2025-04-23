@@ -29,7 +29,7 @@ public class Horse
     //Other methods of class Horse
     public void fall()
     {
-        
+        this.flag = true;
     }
     
     public double getConfidence()
@@ -54,17 +54,17 @@ public class Horse
     
     public void goBackToStart()
     {
-        
+        this.distance++;
     }
     
     public boolean hasFallen()
     {
-        
+        return this.flag;
     }
 
     public void moveForward()
     {
-        
+        this.distance++;
     }
 
     public void setConfidence(double newConfidence)
