@@ -221,6 +221,7 @@ public class Race
     {
         if (theHorse != null && theHorse.getDistanceTravelled() == raceLength)
         {
+            theHorse.setConfidence(theHorse.getConfidence()+0.1);
             return true;
         }
         else
