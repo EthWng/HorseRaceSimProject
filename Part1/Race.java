@@ -1,4 +1,5 @@
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 import java.lang.Math;
 
 /**
@@ -66,7 +67,8 @@ public class Race
     {
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
-        Horse winner = null;
+        ArrayList<Horse> winners = new ArrayList<Horse>();
+        String connective = " ";
         Horse[] laneHorse = {lane1Horse, lane2Horse, lane3Horse};
         int nullHorses = laneHorse.length;
         
@@ -98,13 +100,13 @@ public class Race
             if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
                 if (raceWonBy(lane1Horse)) {
-                    winner = lane1Horse;
+                    winners.add(lane1Horse);
                 }
-                else if (raceWonBy(lane2Horse)) {
-                    winner = lane2Horse;
+                if (raceWonBy(lane2Horse)) {
+                    winners.add(lane2Horse);
                 }
-                else if (raceWonBy(lane3Horse)) {
-                    winner = lane3Horse;
+                if (raceWonBy(lane3Horse)) {
+                    winners.add(lane3Horse);
                 }
                 finished = true;
             }
@@ -118,26 +120,34 @@ public class Race
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
         }
-        if (winner != null){
-            System.out.println("And the Winner is... "+winner.getName()+" !");
-        }
-        else if (horsesFallen(laneHorse)){
-            Horse furthest = null;
-            for (int i = 0; i < laneHorse.length; i++) {
-                if (laneHorse[i] != null){
-                    furthest = laneHorse[i];
-                    break;
+        if (finished){
+            if (winners.size() == 0){
+                Horse furthest = null;
+                for (int i = 0; i < laneHorse.length; i++) {
+                    if (laneHorse[i] != null){
+                        furthest = laneHorse[i];
+                        break;
+                    }
                 }
-            }
-            //finds furthest travelled horse
-            for (int i = 1; i < laneHorse.length; i++) {
-                Horse currentHorse = laneHorse[i];
-                if (currentHorse != null && currentHorse.getDistanceTravelled() > furthest.getDistanceTravelled()) {
-                    furthest = laneHorse[i];
+                //finds furthest travelled horse
+                for (int i = 1; i < laneHorse.length; i++) {
+                    Horse currentHorse = laneHorse[i];
+                    if (currentHorse != null && currentHorse.getDistanceTravelled() > furthest.getDistanceTravelled()) {
+                        furthest = laneHorse[i];
+                    }
                 }
+                System.out.println("All Horses have fallen");
+                System.out.println(furthest.getName() + " has made it the furthest and therefore wins");
             }
-            System.out.println("All Horses have fallen");
-            System.out.println(furthest.getName() + " has made it the furthest and therefore wins");
+            else if (winners.size() == 1){
+                System.out.println("And the Winner is... " +winners.get(0).getName()+ " !");
+            }
+            else if(winners.size() == 2){
+                System.out.println("And its a Tie between... "+winners.get(0).getName()+" And "+winners.get(1).getName()+ " !");
+            }
+            else if(winners.size() == 3){
+                System.out.println("And its a Tie between... "+winners.get(0).getName()+", "+winners.get(1).getName()+ " And "+winners.get(2).getName());
+            }
         }
         else{
             System.out.println("Please enter more than 1 horse");
