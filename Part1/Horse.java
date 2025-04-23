@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * The Horse class represents a horse in the race.
  * It stores the horse's name and position, and has methods to move the horse and check its status.
@@ -24,6 +26,7 @@ public class Horse
         this.name = horseName;
         this.confidence = horseConfidence;
         this.flag = false;
+        checkConfidence();
     }
     
     //Other methods of class Horse
@@ -76,4 +79,25 @@ public class Horse
     {
         this.symbol = newSymbol;
     }
+
+    /**
+     * checks if the horses confidence is within range 
+     * range being 0-1
+     * uses try catch to prevent errors
+     * 
+     */
+    private void checkConfidence(){
+        Scanner scanner = new Scanner(System.in);
+        while (getConfidence() > 1 || getConfidence() < 0) {
+
+            System.out.println("please enter another confidence probability within the range 0-1");
+            String newConfidence = scanner.nextLine();
+
+            try {
+                setConfidence(Double.parseDouble(newConfidence));
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a probability in a decimal format E.g 0.1");
+            }
+        }
+    }   
 }
