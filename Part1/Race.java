@@ -1,5 +1,5 @@
-import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.lang.Math;
 
 /**
@@ -12,9 +12,8 @@ import java.lang.Math;
 public class Race
 {
     private int raceLength;
-    private Horse lane1Horse;
-    private Horse lane2Horse;
-    private Horse lane3Horse;
+    private Horse[] laneHorse;//var containing all horses
+    private int numberOfLanes;//allows more lanes
 
 
     /**
@@ -23,13 +22,15 @@ public class Race
      * 
      * @param distance the length of the racetrack (in metres/yards...)
      */
-    public Race(int distance)
+    public Race(int distance, int lanes)
     {
         // initialise instance variables
         raceLength = distance;
-        lane1Horse = null;
-        lane2Horse = null;
-        lane3Horse = null;
+        laneHorse = new Horse[lanes];
+        numberOfLanes = lanes;
+        for (int i = 0; i < lanes; i++) {
+            laneHorse[i] = null;
+        }
     }
     
 
@@ -42,21 +43,11 @@ public class Race
     public void addHorse(Horse theHorse, int laneNumber)
     {
 
-        if (laneNumber == 1)
-        {
-            lane1Horse = theHorse;
-        }
-        else if (laneNumber == 2)
-        {
-            lane2Horse = theHorse;
-        }
-        else if (laneNumber == 3)
-        {
-            lane3Horse = theHorse;
-        }
-        else
-        {
+        if (laneNumber > numberOfLanes) {
             System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
+        }
+        else{
+            laneHorse[laneNumber-1] = theHorse;
         }
     }
     
@@ -72,47 +63,38 @@ public class Race
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         ArrayList<Horse> winners = new ArrayList<Horse>();//holds the winners of the race
-        String connective = " ";//variable changed depending on amount of winners
-        Horse[] laneHorse = {lane1Horse, lane2Horse, lane3Horse};//var containing all horses
+        String connective;//variable changed depending on amount of winners
         int nullHorses = laneHorse.length;//contains the max possible null horses
         
         //reset all the lanes (all horses not fallen and back to 0). 
-        if (lane1Horse != null){
-            lane1Horse.goBackToStart();
-            nullHorses--;//if its not null counter goes down
-        }
-        if (lane2Horse != null){
-            lane2Horse.goBackToStart();
-            nullHorses--;
-        }
-        if (lane3Horse != null){
-            lane3Horse.goBackToStart();
-            nullHorses--;
+        for (Horse horse : laneHorse) {
+            if (horse != null) {
+                horse.goBackToStart();
+                nullHorses--;//if its not null counter goes down
+            }
         }
                       
         while (!finished && nullHorses < laneHorse.length-1)
         {
             //move each horse
-            moveHorse(lane1Horse);
-            moveHorse(lane2Horse);
-            moveHorse(lane3Horse);
+            for (Horse horse : laneHorse) {
+                moveHorse(horse);
+            }
                         
             //print the race positions
             printRace();
             
             //if any of the three horses has won the race is finished
-            if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
-            {
-                if (raceWonBy(lane1Horse)) {
-                    winners.add(lane1Horse);
+            for (Horse horse : laneHorse) {
+                if ( raceWonBy(horse))
+                {
+                    finished = true;
+                    for (Horse winner : laneHorse) {
+                        if (raceWonBy(winner)) {
+                            winners.add(winner);
+                        } 
+                    }
                 }
-                if (raceWonBy(lane2Horse)) {
-                    winners.add(lane2Horse);
-                }
-                if (raceWonBy(lane3Horse)) {
-                    winners.add(lane3Horse);
-                }
-                finished = true;
             }
 
             if (horsesFallen(laneHorse)){
@@ -240,14 +222,10 @@ public class Race
         multiplePrint('=',raceLength+3); //top edge of track
         System.out.println();
         
-        printLane(lane1Horse);
-        System.out.println();
-        
-        printLane(lane2Horse);
-        System.out.println();
-        
-        printLane(lane3Horse);
-        System.out.println();
+        for (Horse horse : laneHorse) {
+            printLane(horse);
+            System.out.println();
+        }
         
         multiplePrint('=',raceLength+3); //bottom edge of track
         System.out.println();    
