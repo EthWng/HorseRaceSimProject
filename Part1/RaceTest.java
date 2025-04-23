@@ -5,6 +5,7 @@ public class RaceTest {
         System.out.println("");
         testMissingHorse1(distance);
         testMissingHorse2(distance);
+        test1Horse(distance);
     }
 
     //testing the race using with 3 horses
@@ -35,7 +36,7 @@ public class RaceTest {
         race.startRace();  
     }
 
-    //testing if it works if missing 1 horse in middle
+    //testing if it works if missing 1 horse at start
     public static void testMissingHorse2(int distance) {
         System.out.println("=== Test: Missing Race ===");
         Race race = new Race(distance);
@@ -44,6 +45,17 @@ public class RaceTest {
 
         race.addHorse(h2, 2);
         race.addHorse(h3, 3);
+
+        race.startRace();
+    }
+
+    //testing if it works if theres only 1 horse 
+    public static void test1Horse(int distance) {
+        System.out.println("=== Test: Missing2 Race ===");
+        Race race = new Race(distance);
+        Horse h1 = new Horse('A', "Name1", 0.9);
+
+        race.addHorse(h1, 1);
 
         race.startRace();
     }
