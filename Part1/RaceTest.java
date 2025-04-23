@@ -1,6 +1,6 @@
 public class RaceTest {
     public static void main(String[] args) {
-        int distance = 10;
+        int distance = 50;
         testNormalRace(distance);
         System.out.println("");
         testMissingHorse1(distance);
@@ -13,8 +13,8 @@ public class RaceTest {
         System.out.println("=== Test: Normal Race ===");
         Race race = new Race(distance, 5);
         Horse h1 = new Horse('A', "Name1", 1);
-        Horse h2 = new Horse('B', "Name2", 0.85);
-        Horse h3 = new Horse('C', "Name3", 0.7);
+        Horse h2 = new Horse('B', "Name2", 1);
+        Horse h3 = new Horse('C', "Name3", 1);
 
         race.addHorse(h1, 1);
         race.addHorse(h2, 2);
