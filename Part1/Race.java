@@ -109,22 +109,48 @@ public class Race
         
         if (finished){
             if (winners.size() == 0){
-                Horse furthest = null;
+                ArrayList<Horse> furthest = new ArrayList<Horse>();
+
                 for (int i = 0; i < laneHorse.length; i++) {
                     if (laneHorse[i] != null){
-                        furthest = laneHorse[i];
+                        furthest.add(laneHorse[i]);
                         break;
                     }
                 }
+
                 //finds furthest travelled horse
                 for (int i = 1; i < laneHorse.length; i++) {
                     Horse currentHorse = laneHorse[i];
-                    if (currentHorse != null && currentHorse.getDistanceTravelled() > furthest.getDistanceTravelled()) {
-                        furthest = laneHorse[i];
+                    int furthestDistance = furthest.get(0).getDistanceTravelled();
+                    if (currentHorse != null){
+                        if (currentHorse.getDistanceTravelled() == furthestDistance){
+                            furthest.add(laneHorse[i]);
+                        }
+                        else if (currentHorse.getDistanceTravelled() > furthestDistance) {
+                            furthest.clear();
+                            furthest.add(laneHorse[i]);
+                        }
                     }
                 }
+
                 System.out.println("All Horses have fallen");
-                System.out.println(furthest.getName() + " has made it the furthest and therefore wins");
+
+                if (furthest.size() == 1) {
+                    System.out.println(furthest.get(0).getName() + " has made it the furthest and therefore wins");
+                }
+                else{
+                    System.out.print("It's a tie! Horses that made it the furthest: ");
+                    for (int i = 0; i < furthest.size(); i++) {
+                        System.out.print(furthest.get(i).getName());
+                        if (i < furthest.size() - 2) {
+                            System.out.print(", ");
+                        }
+                        else if (i == furthest.size() - 2){
+                            System.out.print(" and ");
+                        }
+                    }
+                    System.out.println("!");
+                }
             }
             else if (winners.size() == 1){
                 System.out.println("And the Winner is... " +winners.get(0).getName()+ " !");
