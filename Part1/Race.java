@@ -66,6 +66,7 @@ public class Race
     {
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
+        Horse winner = null;
         
         //reset all the lanes (all horses not fallen and back to 0). 
         lane1Horse.goBackToStart();
@@ -85,6 +86,15 @@ public class Race
             //if any of the three horses has won the race is finished
             if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
+                if (raceWonBy(lane1Horse)) {
+                    winner = lane1Horse;
+                }
+                else if (raceWonBy(lane2Horse)) {
+                    winner = lane2Horse;
+                }
+                else if (raceWonBy(lane3Horse)) {
+                    winner = lane3Horse;
+                }
                 finished = true;
             }
            
@@ -92,6 +102,9 @@ public class Race
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
+        }
+        if (winner != null){
+            System.out.println("And the Winner is... "+winner.getName()+" !");
         }
     }
     
@@ -199,7 +212,7 @@ public class Race
         multiplePrint(' ',spacesAfter);
         
         //print the | for the end of the track
-        System.out.print('|');
+        System.out.print("| "+theHorse.getName().toUpperCase()+" (Current confidence "+theHorse.getConfidence()+")");
     }
         
     
