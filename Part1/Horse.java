@@ -33,6 +33,7 @@ public class Horse
     public void fall()
     {
         this.flag = true;
+        this.confidence -= .1;
     }
     
     public double getConfidence()
