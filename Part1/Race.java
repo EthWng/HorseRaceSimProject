@@ -68,11 +68,18 @@ public class Race
         boolean finished = false;
         Horse winner = null;
         Horse[] laneHorse = {lane1Horse, lane2Horse, lane3Horse};
+        int nullHorses = laneHorse.length;
         
         //reset all the lanes (all horses not fallen and back to 0). 
-        lane1Horse.goBackToStart();
-        lane2Horse.goBackToStart();
-        lane3Horse.goBackToStart();
+        if (lane1Horse != null){
+            lane1Horse.goBackToStart();
+        }
+        if (lane2Horse != null){
+            lane2Horse.goBackToStart();
+        }
+        if (lane3Horse != null){
+            lane3Horse.goBackToStart();
+        }
                       
         while (!finished)
         {
@@ -155,7 +162,7 @@ public class Race
     {
         //if the horse has fallen it cannot move, 
         //so only run if it has not fallen
-        if  (!theHorse.hasFallen())
+        if  (theHorse != null && !theHorse.hasFallen())
         {
             //the probability that the horse will move forward depends on the confidence;
             if (Math.random() < theHorse.getConfidence())
@@ -181,7 +188,7 @@ public class Race
      */
     private boolean raceWonBy(Horse theHorse)
     {
-        if (theHorse.getDistanceTravelled() == raceLength)
+        if (theHorse != null && theHorse.getDistanceTravelled() == raceLength)
         {
             return true;
         }
@@ -224,31 +231,39 @@ public class Race
     {
         //calculate how many spaces are needed before
         //and after the horse
-        int spacesBefore = theHorse.getDistanceTravelled();
-        int spacesAfter = raceLength - theHorse.getDistanceTravelled();
-        
-        //print a | for the beginning of the lane
-        System.out.print('|');
-        
-        //print the spaces before the horse
-        multiplePrint(' ',spacesBefore);
-        
-        //if the horse has fallen then print dead
-        //else print the horse's symbol
-        if(theHorse.hasFallen())
-        {
-            System.out.print('\u2322');
+        if (theHorse != null){
+            int spacesBefore = theHorse.getDistanceTravelled();
+            int spacesAfter = raceLength - theHorse.getDistanceTravelled();
+            
+            //print a | for the beginning of the lane
+            System.out.print('|');
+            
+            //print the spaces before the horse
+            multiplePrint(' ',spacesBefore);
+            
+            //if the horse has fallen then print dead
+            //else print the horse's symbol
+            if(theHorse.hasFallen())
+            {
+                System.out.print('\u2322');
+            }
+            else
+            {
+                System.out.print(theHorse.getSymbol());
+            }
+            
+            //print the spaces after the horse
+            multiplePrint(' ',spacesAfter);
+            
+            //print the | for the end of the track
+            System.out.print("| "+theHorse.getName().toUpperCase()+" (Current confidence "+theHorse.getConfidence()+")");
         }
-        else
-        {
-            System.out.print(theHorse.getSymbol());
+        else{
+            System.out.print('|');
+            int spacesBefore = raceLength+1;
+            multiplePrint(' ',spacesBefore);
+            System.out.print("| ");
         }
-        
-        //print the spaces after the horse
-        multiplePrint(' ',spacesAfter);
-        
-        //print the | for the end of the track
-        System.out.print("| "+theHorse.getName().toUpperCase()+" (Current confidence "+theHorse.getConfidence()+")");
     }
         
     
