@@ -1,16 +1,23 @@
-
 /**
- * Write a description of class Horse here.
+ * The Horse class represents a horse in the race.
+ * It stores the horse's name and position, and has methods to move the horse and check its status.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Ethan Wong 
+ * @version 1
  */
 public class Horse
 {
     //Fields of class Horse
-    
-    
+    private String name;
+    private char symbol;
+    private int distance;
+    private boolean flag; //if true shows x char else
+    private double confidence;
       
+    //Constructor of class Horse
+    /**
+     * Constructor for objects of class Horse
+     */
     //Constructor of class Horse
     /**
      * Constructor for objects of class Horse
@@ -19,8 +26,6 @@ public class Horse
     {
        
     }
-    
-    
     
     //Other methods of class Horse
     public void fall()
@@ -72,5 +77,4 @@ public class Horse
     {
         
     }
-    
 }
