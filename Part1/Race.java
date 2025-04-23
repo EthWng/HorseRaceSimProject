@@ -73,15 +73,18 @@ public class Race
         //reset all the lanes (all horses not fallen and back to 0). 
         if (lane1Horse != null){
             lane1Horse.goBackToStart();
+            nullHorses--;
         }
         if (lane2Horse != null){
             lane2Horse.goBackToStart();
+            nullHorses--;
         }
         if (lane3Horse != null){
             lane3Horse.goBackToStart();
+            nullHorses--;
         }
                       
-        while (!finished)
+        while (!finished && nullHorses < laneHorse.length-1)
         {
             //move each horse
             moveHorse(lane1Horse);
@@ -118,7 +121,7 @@ public class Race
         if (winner != null){
             System.out.println("And the Winner is... "+winner.getName()+" !");
         }
-        else{
+        else if (horsesFallen(laneHorse)){
             Horse furthest = null;
             for (int i = 0; i < laneHorse.length; i++) {
                 if (laneHorse[i] != null){
@@ -135,6 +138,9 @@ public class Race
             }
             System.out.println("All Horses have fallen");
             System.out.println(furthest.getName() + " has made it the furthest and therefore wins");
+        }
+        else{
+            System.out.println("Please enter more than 1 horse");
         }
     }
 
