@@ -104,7 +104,7 @@ public class Race
                 theHorse.setConfidence(Math.round((theHorse.getConfidence()-.1) * 100.0) / 100.0);
                 break;
             default:
-                theHorse.setConfidence(Math.round((theHorse.getConfidence()-.2) * 100.0) / 100.0);
+                theHorse.setConfidence(Math.round((theHorse.getConfidence()-.15) * 100.0) / 100.0);
                 break;
         }
     }
@@ -284,6 +284,7 @@ public class Race
         //so only run if it has not fallen
         if  (theHorse != null && !theHorse.hasFallen())
         {
+            double chance = 0.1*(Math.random()*.5);
             //the probability that the horse will move forward depends on the confidence;
             if (Math.random() < theHorse.getConfidence())
             {
@@ -301,15 +302,36 @@ public class Race
                 }
             }
             
+            //change probability based on weather
+            //if dry probability low-normal
+            //if muddy normal-slightly higer
+            //else higher-high
+            System.out.println(weather);
+            System.out.println(season);
+            if (weather == 1){
+                chance += .05;
+            } 
+            else if (weather == 2) {
+                chance += .1;
+            }
+            else if (weather == 3) {
+                chance += .125;
+            }
+
             //the probability that the horse will fall is very small (max is 0.1)
             //but will also will depends exponentially on confidence 
-            //so if you double the confidence, the probability that it will fall is *2
-            if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()))
+            //so if you double the confidence, the probability that it will fall is *4
+            if (Math.random() < (chance*theHorse.getConfidence()*theHorse.getConfidence()))
             {
+                //if icy/dry and winter confidence falls by .2
+                if ((season < 3 || season > 10) && (weather == 1 || weather == 3)) {
+                    System.out.println("AAA");
+                    theHorse.setConfidence(Math.round((theHorse.getConfidence()-.05) * 100.0) / 100.0);
+                }
                 theHorse.fall();
             }
 
-            if (theHorse.getDistanceTravelled() == raceLength)
+            if (theHorse.getDistanceTravelled() >= raceLength)
             {
                 theHorse.setConfidence(Math.round((theHorse.getConfidence()+.1) * 100.0) / 100.0);
             }
