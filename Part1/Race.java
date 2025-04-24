@@ -53,8 +53,8 @@ public class Race
         season = (int)(Math.random() * 12) + 1;
         weatherChance = (Math.random() * 30);
         //higher chance to be icy
-        if (season < 3 || season > 11) {
-            odds(7,16,30);
+        if (season < 3 || season > 10) {
+            odds(7,11,30);
         }
         //higher chance to be muddy
         else if (season < 4 || season > 8){
@@ -325,7 +325,7 @@ public class Race
      */
     private boolean raceWonBy(Horse theHorse)
     {
-        if (theHorse != null && theHorse.getDistanceTravelled() == raceLength && !theHorse.hasFallen())
+        if (theHorse != null && theHorse.getDistanceTravelled() >= raceLength && !theHorse.hasFallen())
         {
             return true;
         }
@@ -366,8 +366,14 @@ public class Race
     {
         //calculate how many spaces are needed before
         //and after the horse
+        int spacesBefore;
         if (theHorse != null){
-            int spacesBefore = theHorse.getDistanceTravelled();
+            if (theHorse.getDistanceTravelled() > raceLength) {
+                spacesBefore = raceLength;
+            }
+            else{
+                spacesBefore = theHorse.getDistanceTravelled();
+            }
             int spacesAfter = raceLength - theHorse.getDistanceTravelled();
             
             //print a | for the beginning of the lane
@@ -395,7 +401,7 @@ public class Race
         }
         else{
             System.out.print('|');
-            int spacesBefore = raceLength+1;
+            spacesBefore = raceLength+1;
             multiplePrint(' ',spacesBefore);
             System.out.print("| ");
         }
