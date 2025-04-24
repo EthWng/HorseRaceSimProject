@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.lang.Math;
+import java.util.Random;
 
 /**
  * A three-horse race, each horse running in its own lane
@@ -14,6 +15,9 @@ public class Race
     private int raceLength;
     private Horse[] laneHorse;//var containing all horses
     private int numberOfLanes;//allows more lanes
+    private int season;//random season
+    private double weatherChance;//chance of a weather event depends on season 
+    private int weather;//final weather event
 
 
     /**
@@ -21,6 +25,7 @@ public class Race
      * Initially there are no horses in the lanes
      * 
      * @param distance the length of the racetrack (in metres/yards...)
+     * @param lanes the number of lanes of the racetrack
      */
     public Race(int distance, int lanes)
     {
@@ -28,8 +33,81 @@ public class Race
         raceLength = distance;
         laneHorse = new Horse[lanes];
         numberOfLanes = lanes;
+        weather();
         for (int i = 0; i < lanes; i++) {
             laneHorse[i] = null;
+        }
+    }
+
+
+    /**
+     * randomises the season and weather
+     * the weather depends on the season e.g
+     * if season is jan, feb or dec its more likely to be icy or dry
+     * if season is mar, oct or nov its more likely to be muddy
+     * else its more likely to be dry and impossible to be icy
+     * 
+     * 
+     */
+    private void weather(){
+        season = (int)(Math.random() * 12) + 1;
+        weatherChance = (Math.random() * 30);
+        //higher chance to be icy
+        if (season < 3 || season > 11) {
+            odds(7,16,30);
+        }
+        //higher chance to be muddy
+        else if (season < 4 || season > 8){
+            odds(5,25,30);
+        }
+        //higher chance to be dry
+        else{
+            odds(21,30,0);//icy odds impossible
+        }
+    }
+
+
+    /**
+     * sets weather var depending on odds
+     * 
+     * @param dryOdds the odds that weather is dry
+     * @param muddyOdds odds that weather is rainy
+     * @param icyOdds odds that weather is icy
+     */
+    private void odds(int dryOdds, int muddyOdds, int icyOdds){
+        if (weatherChance < dryOdds) {
+           weather = 1; 
+        }
+        else if (weatherChance < muddyOdds) {
+            weather = 2;
+        }
+        else if (weatherChance < icyOdds) {
+            weather = 3;
+        }
+        System.out.println(season);
+        System.out.println(weather);
+    }
+
+
+    /**
+     *changes the confidence of all horses once the program has started
+     * 
+     * 
+     * @param theHorse current horses confidence will change
+     */
+    private void confidenceChange(Horse theHorse){
+        //weather effects
+        //dry makes the move normally and the risk of falling decreases a lot, confidence increase
+        switch (weather) {
+            case 1:
+                theHorse.setConfidence(Math.round((theHorse.getConfidence()+.1) * 100.0) / 100.0);
+                break;
+            case 2:
+                theHorse.setConfidence(Math.round((theHorse.getConfidence()-.1) * 100.0) / 100.0);
+                break;
+            default:
+                theHorse.setConfidence(Math.round((theHorse.getConfidence()-.2) * 100.0) / 100.0);
+                break;
         }
     }
     
@@ -48,6 +126,7 @@ public class Race
         }
         else{
             laneHorse[laneNumber-1] = theHorse;
+            confidenceChange(theHorse);
         }
     }
     
@@ -85,7 +164,7 @@ public class Race
             
             //if any of the three horses has won the race is finished
             for (Horse horse : laneHorse) {
-                if ( raceWonBy(horse))
+                if (raceWonBy(horse))
                 {
                     finished = true;
                     winners.add(horse);
@@ -137,6 +216,9 @@ public class Race
                     System.out.print("It's a tie! Horses that made it the furthest: ");
                     connective(furthest);
                 }
+            }
+            else if (winners.size() == 1) {
+                System.out.print("And the winner is... "+winners.get(0).getName()+" !");
             }
             else{
                 System.out.print("And its a Tie between... ");
@@ -207,7 +289,16 @@ public class Race
             //the probability that the horse will move forward depends on the confidence;
             if (Math.random() < theHorse.getConfidence())
             {
-               theHorse.moveForward();
+                if (weather == 1) {
+                    theHorse.moveForward();
+                }
+                else if (weather == 2 && Math.random() <= 0.75) {
+                    theHorse.moveForward();
+                }
+                else{
+                    theHorse.moveForward();
+                    theHorse.moveForward();
+                }
             }
             
             //the probability that the horse will fall is very small (max is 0.1)
@@ -216,6 +307,11 @@ public class Race
             if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()))
             {
                 theHorse.fall();
+            }
+
+            if (theHorse.getDistanceTravelled() == raceLength)
+            {
+                theHorse.setConfidence(Math.round((theHorse.getConfidence()+.1) * 100.0) / 100.0);
             }
         }
     }
@@ -229,9 +325,8 @@ public class Race
      */
     private boolean raceWonBy(Horse theHorse)
     {
-        if (theHorse != null && theHorse.getDistanceTravelled() == raceLength)
+        if (theHorse != null && theHorse.getDistanceTravelled() == raceLength && !theHorse.hasFallen())
         {
-            theHorse.setConfidence(theHorse.getConfidence()+0.1);
             return true;
         }
         else
