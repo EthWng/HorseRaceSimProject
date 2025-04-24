@@ -63,7 +63,6 @@ public class Race
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         ArrayList<Horse> winners = new ArrayList<Horse>();//holds the winners of the race
-        String connective;//variable changed depending on amount of winners
         int nullHorses = laneHorse.length;//contains the max possible null horses
         
         //reset all the lanes (all horses not fallen and back to 0). 
@@ -89,14 +88,10 @@ public class Race
                 if ( raceWonBy(horse))
                 {
                     finished = true;
-                    for (Horse winner : laneHorse) {
-                        if (raceWonBy(winner)) {
-                            winners.add(winner);
-                        } 
-                    }
+                    winners.add(horse);
                 }
             }
-
+            
             if (horsesFallen(laneHorse)){
                 finished = true;
             }
@@ -140,31 +135,38 @@ public class Race
                 }
                 else{
                     System.out.print("It's a tie! Horses that made it the furthest: ");
-                    for (int i = 0; i < furthest.size(); i++) {
-                        System.out.print(furthest.get(i).getName());
-                        if (i < furthest.size() - 2) {
-                            System.out.print(", ");
-                        }
-                        else if (i == furthest.size() - 2){
-                            System.out.print(" and ");
-                        }
-                    }
-                    System.out.println("!");
+                    connective(furthest);
                 }
             }
-            else if (winners.size() == 1){
-                System.out.println("And the Winner is... " +winners.get(0).getName()+ " !");
-            }
-            else if(winners.size() == 2){
-                System.out.println("And its a Tie between... "+winners.get(0).getName()+" And "+winners.get(1).getName()+ " !");
-            }
-            else if(winners.size() == 3){
-                System.out.println("And its a Tie between... "+winners.get(0).getName()+", "+winners.get(1).getName()+ " And "+winners.get(2).getName());
+            else{
+                System.out.print("And its a Tie between... ");
+                connective(winners);
             }
         }
         else{
             System.out.println("Please enter more than 1 horse");
         }
+    }
+
+
+    /**
+     *prints out which horses have tied
+     *prints name, name or name and name depending 
+     * 
+     * 
+     * @param tying arraylist holding the horses that have "won" the race
+     */
+    private void connective(ArrayList<Horse> tying){
+        for (int i = 0; i < tying.size(); i++) {
+            System.out.print(tying.get(i).getName());
+            if (i < tying.size() - 2) {
+                System.out.print(", ");
+            }
+            else if (i == tying.size() - 2){
+                System.out.print(" and ");
+            }
+        }
+        System.out.println("!");
     }
 
 
@@ -229,6 +231,7 @@ public class Race
     {
         if (theHorse != null && theHorse.getDistanceTravelled() == raceLength)
         {
+            theHorse.setConfidence(theHorse.getConfidence()+0.1);
             return true;
         }
         else
