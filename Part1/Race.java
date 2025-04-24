@@ -84,8 +84,6 @@ public class Race
         else if (weatherChance < icyOdds) {
             weather = 3;
         }
-        System.out.println(season);
-        System.out.println(weather);
     }
 
 
@@ -296,7 +294,9 @@ public class Race
                     theHorse.moveForward();
                 }
                 else{
-                    theHorse.moveForward();
+                    if (Math.random() <= 0.5){
+                        theHorse.moveForward();
+                    }
                     theHorse.moveForward();
                 }
             }
