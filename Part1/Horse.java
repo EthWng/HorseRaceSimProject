@@ -33,6 +33,7 @@ public class Horse
     public void fall()
     {
         this.flag = true;
+        this.confidence = Math.round((this.confidence-.1) * 100.0) / 100.0;
     }
     
     public double getConfidence()
@@ -72,7 +73,18 @@ public class Horse
 
     public void setConfidence(double newConfidence)
     {
-        this.confidence = newConfidence;
+        //lowest confidence
+        if (newConfidence <= 0) {
+            this.confidence = 0.1; 
+        }
+        //highest confidence
+        else if (newConfidence > 1) {
+            this.confidence = 1;
+        }
+        else{
+            this.confidence = newConfidence;
+        }
+        this.confidence = Math.round(this.confidence * 100.0) / 100.0;
     }
     
     public void setSymbol(char newSymbol)
