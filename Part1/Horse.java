@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 /**
  * The Horse class represents a horse in the race.
  * It stores the horse's name and position, and has methods to move the horse and check its status.
@@ -13,6 +11,9 @@ public class Horse
     private String name;
     private int breed; //one of 3, constant
     private static String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
+    private double raceLength;
+    private int saddle;
+    private int hoof;
     private char symbol;
     private double distance;
     private boolean flag; //if true shows x char else
@@ -27,14 +28,15 @@ public class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(char horseSymbol, String horseName, double horseConfidence, int breed)
+    public Horse(char horseSymbol, String horseName, int breed, int hoof, int saddle)
     {
         this.symbol = horseSymbol;
         this.name = horseName;
-        this.confidence = horseConfidence;
+        this.confidence = 0.3;
         this.flag = false;
-        checkConfidence();
         this.breed = breed;
+        setHoof(hoof);
+        setSaddle(saddle); 
     }
     
     //Other methods of class Horse
@@ -119,51 +121,84 @@ public class Horse
         this.symbol = newSymbol;
     }
 
-    /**
+    public void setRaceLength(double raceLength){
+        this.raceLength = raceLength;
+        setSpeed();
+    }
+
+    public int getHoof(){
+        return this.hoof;
+    }
+
+    /***
+     * makes horse move slower but increases stamina
+     * saddle 1 reduces speed by *.90 increases stamina by *1.15
+     * saddle 2 reduces speed by *.85 increases stamina by *1.3
+     * 
+     *
+     */
+    public void setSaddle(int saddle){
+        this.saddle = saddle;
+        setSpeed();
+    }
+
+    /***
+     * makes horse move faste/slower but reduces/increases stability
+     * hoof 1 makes horse move faster *1.2 but more unstable *1.35 confidence decreases .02
+     * hoof 2 makes horse move slower *0.85 but more stable *0.75 confidence increase by .03
+     * 
+     *
+     */
+    public void setHoof(int hoof){
+        this.hoof = hoof;
+        setSpeed();
+    }
+
+    /***
      * sets the horses speed depending on breed
      * sets the horses stamina depending on speed and initial confidence
      * 
      * 
      */
-    public void setSpeed(double raceLength){
-        for (String breed: breeds){
-            if (breeds[this.breed].equals(breed)){
-                this.speed = .75;
-                setConfidence(this.confidence+.08);
-            }
-            else if (breeds[this.breed].equals(breed)){
-                this.speed = 1;
-                setConfidence(this.confidence+.1);
-            }
-            else{
-                this.speed = 1.5;
-                setConfidence(this.confidence+.15);
-            }
+    public void setSpeed(){
+        if (this.breed == 1){
+            this.speed = .75;
+            setConfidence(this.confidence+.08);
         }
-        this.stamina = (raceLength / (this.speed*2*this.confidence));
+        else if (this.breed == 1){
+            this.speed = 1;
+            setConfidence(this.confidence+.1);
+        }
+        else{
+            this.speed = 1.5;
+            setConfidence(this.confidence+.15);
+        }
+
+
+        this.stamina = (this.raceLength / (this.speed*2*this.confidence));
+
+        //hoof can only be 1 or 2
+        if (this.hoof == 1) {
+            this.speed *= 1.2;
+            setConfidence(this.confidence -= .02);
+        }
+        else{
+            this.speed *= .85;
+            setConfidence(this.confidence += .03);
+        }
+
+        //saddle can only be 1 or 2
+        if (this.saddle == 1) {
+            this.speed *=.9;
+            this.stamina *= 1.15;
+        }
+        else{
+            this.speed *=.85;
+            this.stamina *= 1.3;
+        }
+
         this.staminaLose = this.stamina;
         this.cooldown = (this.speed * 1.5);
         this.cooldownLose = this.cooldown;
-    }
-
-    /**
-     * checks if the horses confidence is within range 
-     * range being 0-1
-     * uses try catch to prevent errors
-     * 
-     */
-    private void checkConfidence(){
-        Scanner scanner = new Scanner(System.in);
-        while (getConfidence() > 1 || getConfidence() < 0) {
-
-            System.out.println("please enter another confidence probability within the range 0-1");
-            String newConfidence = scanner.nextLine();
-
-            try {
-                setConfidence(Double.parseDouble(newConfidence));
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a probability in a decimal format E.g 0.1");
-            }
-        }
-    }   
+    }  
 }
