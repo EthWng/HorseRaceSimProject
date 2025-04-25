@@ -13,6 +13,7 @@ import java.util.Random;
 public class Race
 {
     private int raceLength;
+    //private double raceLength;
     private Horse[] laneHorse;//var containing all horses
     private int numberOfLanes;//allows more lanes
     private int season;//random season
@@ -107,6 +108,7 @@ public class Race
                 theHorse.setConfidence(Math.round((theHorse.getConfidence()-.15) * 100.0) / 100.0);
                 break;
         }
+        theHorse.setSpeed(raceLength);
     }
     
 
@@ -193,7 +195,7 @@ public class Race
                 //finds furthest travelled horse
                 for (int i = 1; i < laneHorse.length; i++) {
                     Horse currentHorse = laneHorse[i];
-                    int furthestDistance = furthest.get(0).getDistanceTravelled();
+                    double furthestDistance = furthest.get(0).getDistanceTravelled();
                     if (currentHorse != null){
                         if (currentHorse.getDistanceTravelled() == furthestDistance){
                             furthest.add(laneHorse[i]);
@@ -306,8 +308,6 @@ public class Race
             //if dry probability low-normal
             //if muddy normal-slightly higer
             //else higher-high
-            System.out.println(weather);
-            System.out.println(season);
             if (weather == 1){
                 chance += .05;
             } 
@@ -325,7 +325,6 @@ public class Race
             {
                 //if icy/dry and winter confidence falls by .2
                 if ((season < 3 || season > 10) && (weather == 1 || weather == 3)) {
-                    System.out.println("AAA");
                     theHorse.setConfidence(Math.round((theHorse.getConfidence()-.05) * 100.0) / 100.0);
                 }
                 theHorse.fall();
@@ -365,7 +364,7 @@ public class Race
     {
         System.out.print('\u000C');  //clear the terminal window
         
-        multiplePrint('=',raceLength+3); //top edge of track
+        multiplePrint('=',raceLength); //top edge of track
         System.out.println();
         
         for (Horse horse : laneHorse) {
@@ -373,7 +372,7 @@ public class Race
             System.out.println();
         }
         
-        multiplePrint('=',raceLength+3); //bottom edge of track
+        multiplePrint('=',raceLength); //bottom edge of track
         System.out.println();    
     }
     
@@ -388,7 +387,7 @@ public class Race
     {
         //calculate how many spaces are needed before
         //and after the horse
-        int spacesBefore;
+        double spacesBefore;
         if (theHorse != null){
             if (theHorse.getDistanceTravelled() > raceLength) {
                 spacesBefore = raceLength;
@@ -396,13 +395,21 @@ public class Race
             else{
                 spacesBefore = theHorse.getDistanceTravelled();
             }
-            int spacesAfter = raceLength - theHorse.getDistanceTravelled();
+            double spacesAfter = raceLength - spacesBefore;
+            if ((int)spacesBefore+(int)spacesAfter+1 > raceLength) {
+                if (spacesBefore > spacesAfter) {
+                    spacesBefore-=1;
+                }
+                else{
+                    spacesAfter-=1;
+                }
+            }
             
             //print a | for the beginning of the lane
             System.out.print('|');
             
             //print the spaces before the horse
-            multiplePrint(' ',spacesBefore);
+            multiplePrint(' ', (int) spacesBefore);
             
             //if the horse has fallen then print dead
             //else print the horse's symbol
@@ -416,15 +423,16 @@ public class Race
             }
             
             //print the spaces after the horse
-            multiplePrint(' ',spacesAfter);
+            multiplePrint(' ', (int) spacesAfter);
             
             //print the | for the end of the track
             System.out.print("| "+theHorse.getName().toUpperCase()+" (Current confidence "+theHorse.getConfidence()+")");
         }
         else{
             System.out.print('|');
-            spacesBefore = raceLength+1;
-            multiplePrint(' ',spacesBefore);
+            spacesBefore = raceLength-1;
+            System.out.print(" ");
+            multiplePrint(' ', (int) spacesBefore);
             System.out.print("| ");
         }
     }
@@ -438,11 +446,11 @@ public class Race
      */
     private void multiplePrint(char aChar, int times)
     {
-        int i = 0;
+        double i = 0;
         while (i < times)
         {
             System.out.print(aChar);
-            i = i + 1;
+            i++;
         }
     }
 }
