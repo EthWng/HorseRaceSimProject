@@ -11,22 +11,30 @@ public class Horse
 {
     //Fields of class Horse
     private String name;
+    private int breed; //one of 3, constant
+    private static String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
     private char symbol;
-    private int distance;
+    private double distance;
     private boolean flag; //if true shows x char else
     private double confidence;
+    private double speed;
+    private double stamina;//constant
+    private double staminaLose;
+    private double cooldown;//constant
+    private double cooldownLose;
       
     //Constructor of class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(char horseSymbol, String horseName, double horseConfidence)
+    public Horse(char horseSymbol, String horseName, double horseConfidence, int breed)
     {
         this.symbol = horseSymbol;
         this.name = horseName;
         this.confidence = horseConfidence;
         this.flag = false;
         checkConfidence();
+        this.breed = breed;
     }
     
     //Other methods of class Horse
@@ -41,7 +49,7 @@ public class Horse
         return this.confidence;
     }
     
-    public int getDistanceTravelled()
+    public double getDistanceTravelled()
     {
         return this.distance;
     }
@@ -66,9 +74,28 @@ public class Horse
         return this.flag;
     }
 
+    /**
+     * horses movement depends on its speed and stamina
+     * 
+     * 
+     * 
+     */
     public void moveForward()
     {
-        this.distance++;
+        //horses lose stamina while moving
+        if (this.staminaLose > 0){
+            this.distance += this.speed;
+            this.staminaLose-=1;
+        }
+        //if horseshave no stamina then the horse will move slower and regain its stamina
+        else{
+            this.distance += this.speed/2.5;
+            this.cooldownLose-=2.5;
+            if (this.cooldownLose <= 0){
+                this.staminaLose = this.stamina;
+                this.cooldownLose = this.cooldown;
+            }
+        }
     }
 
     public void setConfidence(double newConfidence)
@@ -90,6 +117,33 @@ public class Horse
     public void setSymbol(char newSymbol)
     {
         this.symbol = newSymbol;
+    }
+
+    /**
+     * sets the horses speed depending on breed
+     * sets the horses stamina depending on speed and initial confidence
+     * 
+     * 
+     */
+    public void setSpeed(double raceLength){
+        for (String breed: breeds){
+            if (breeds[this.breed].equals(breed)){
+                this.speed = .75;
+                setConfidence(this.confidence+.08);
+            }
+            else if (breeds[this.breed].equals(breed)){
+                this.speed = 1;
+                setConfidence(this.confidence+.1);
+            }
+            else{
+                this.speed = 1.5;
+                setConfidence(this.confidence+.15);
+            }
+        }
+        this.stamina = (raceLength / (this.speed*2*this.confidence));
+        this.staminaLose = this.stamina;
+        this.cooldown = (this.speed * 1.5);
+        this.cooldownLose = this.cooldown;
     }
 
     /**
