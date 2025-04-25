@@ -99,16 +99,16 @@ public class Race
         //dry makes the move normally and the risk of falling decreases a lot, confidence increase
         switch (weather) {
             case 1:
-                theHorse.setConfidence(Math.round((theHorse.getConfidence()+.1) * 100.0) / 100.0);
+                theHorse.setConfidence(theHorse.getConfidence()+.1);
                 break;
             case 2:
-                theHorse.setConfidence(Math.round((theHorse.getConfidence()-.1) * 100.0) / 100.0);
+                theHorse.setConfidence(theHorse.getConfidence()-.1);
                 break;
             default:
-                theHorse.setConfidence(Math.round((theHorse.getConfidence()-.15) * 100.0) / 100.0);
+                theHorse.setConfidence(theHorse.getConfidence()-.15);
                 break;
         }
-        theHorse.setSpeed(raceLength);
+        theHorse.setRaceLength(raceLength);
     }
     
 
@@ -286,7 +286,7 @@ public class Race
         //so only run if it has not fallen
         if  (theHorse != null && !theHorse.hasFallen())
         {
-            double chance = 0.1*(Math.random()*.5);
+            double chance = 0.1*(Math.random()*.1);
             //the probability that the horse will move forward depends on the confidence;
             if (Math.random() < theHorse.getConfidence())
             {
@@ -294,10 +294,10 @@ public class Race
                     theHorse.moveForward();
                 }
                 else if (weather == 2 && Math.random() <= 0.75) {
-                    theHorse.moveForward();
+                    theHorse.moveForward();//horse might get stuck if ground is muddy
                 }
                 else{
-                    if (Math.random() <= 0.5){
+                    if (Math.random() <= 0.5){//if icy horse could slide
                         theHorse.moveForward();
                     }
                     theHorse.moveForward();
@@ -309,13 +309,20 @@ public class Race
             //if muddy normal-slightly higer
             //else higher-high
             if (weather == 1){
-                chance += .05;
+                chance += .025;
             } 
             else if (weather == 2) {
-                chance += .1;
+                chance += .04;
             }
             else if (weather == 3) {
-                chance += .125;
+                chance += .07;
+            }
+
+            if (theHorse.getHoof() == 1) {
+                chance *= 1.35;
+            }
+            else{
+                chance *= .85;
             }
 
             //the probability that the horse will fall is very small (max is 0.1)
@@ -325,14 +332,14 @@ public class Race
             {
                 //if icy/dry and winter confidence falls by .2
                 if ((season < 3 || season > 10) && (weather == 1 || weather == 3)) {
-                    theHorse.setConfidence(Math.round((theHorse.getConfidence()-.05) * 100.0) / 100.0);
+                    theHorse.setConfidence(theHorse.getConfidence()-.05);
                 }
                 theHorse.fall();
             }
 
             if (theHorse.getDistanceTravelled() >= raceLength)
             {
-                theHorse.setConfidence(Math.round((theHorse.getConfidence()+.1) * 100.0) / 100.0);
+                theHorse.setConfidence(theHorse.getConfidence()+.1);
             }
         }
     }
