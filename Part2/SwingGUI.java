@@ -1,10 +1,9 @@
-import java.awt.FlowLayout;
-import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.*;
 
 public class SwingGUI {
     public static void main(String[] args) {
-        ArrayList<Character> horses = new ArrayList<>();
+        HashMap<Character, String> horses = new HashMap<>();
         // Create main window
         JFrame frame = new JFrame("Horse Race");
         frame.setSize(1280, 720);
@@ -17,67 +16,56 @@ public class SwingGUI {
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel panel3 = new JPanel();
-        JPanel panel4 = new JPanel();
-        panel1.setLayout(new FlowLayout());
 
-        JTextField inputField = new JTextField(10); // 10 columns wide
+        JTextField inputSymbolField = new JTextField(10);
+        JTextField inputNameField = new JTextField(10);
 
         // Create a button
-        JButton submitButton = new JButton("Submit");
-
-        // When button is clicked, print the text
-        submitButton.addActionListener(e -> {
-            String userInput = inputField.getText();
-            System.out.println("User typed: " + userInput);
-        });
+        JButton submitButton = new JButton("Enter");
 
 
         // Add panels to tabs
-        tabbedPane.addTab("Statistics", panel1);
-        tabbedPane.addTab("Betting", panel2);
-        tabbedPane.addTab("Horse Options", panel3);
-        tabbedPane.addTab("Race Options", panel4);
+        tabbedPane.addTab("Horse Options", panel1);
+        tabbedPane.addTab("Race Options", panel2);
+        tabbedPane.addTab("Statistics", panel3);
 
-        panel3.add(new JLabel("Enter Horse Character:"));
-        panel3.add(inputField);
-        panel3.add(submitButton);
+        panel1.add(new JLabel("Enter Horse Character:"));
+        panel1.add(inputSymbolField);
+        panel1.add(new JLabel("Enter The Horses name:"));
+        panel1.add(inputNameField);
+        panel1.add(submitButton);
 
         submitButton.addActionListener(e -> {
-            String userText = inputField.getText().trim();
-            panel3.removeAll();
-        
-            if (userText.length() != 1) {
+            String symbol = inputSymbolField.getText().trim();
+            String name = inputNameField.getText().trim();
+            inputSymbolField.setText("");
+            panel1.removeAll();
+            
+            if (symbol.length() != 1) {
                 // If the user didn't enter exactly one character
-                panel3.add(new JLabel("Please enter a single character:"));
-                panel3.add(inputField);
-                panel3.add(submitButton);
-            } else {
-                char chosenChar = userText.charAt(0);
-                boolean alreadyTaken = false;
-        
-                for (char horse : horses) {
-                    if (horse == chosenChar) {
-                        alreadyTaken = true;
-                        break;
-                    }
-                }
-        
-                if (alreadyTaken) {
-                    panel3.add(new JLabel("The character " + chosenChar + " is unavailable."));
-                    panel3.add(inputField);
-                    panel3.add(submitButton);
-                } else {
-                    horses.add(chosenChar);
-                    panel3.add(new JLabel("You have picked: " + chosenChar));
-                    // You can continue or move to next step
-                    panel3.add(new JLabel(""));
-                    panel3.add(new JLabel("Do you want to add another horse."));
-                    panel3.add(submitButton);
+                panel1.add(new JLabel("Please enter a single character:"));
+                panel1.add(inputSymbolField);
+                panel1.add(new JLabel("Enter The Horses name again:"));
+                panel1.add(inputNameField);
+                panel1.add(submitButton);
+            }
+            else {
+                char chosenChar = symbol.charAt(0);
+                
+                if (horses.containsKey(chosenChar)) {
+                    panel1.add(new JLabel("The character " + chosenChar + " is unavailable."));
+                    panel1.add(inputSymbolField);
+                    panel1.add(submitButton);
+                }else {
+                    horses.put(chosenChar, name);
+                    panel1.add(new JLabel("<html>You have picked: " +chosenChar+"<br>Do you want to add another horse.</html>"));
+                    panel1.add(submitButton);
+                    System.out.println(horses.get(chosenChar));
                 }
             }
-        
-            panel3.revalidate();
-            panel3.repaint();
+            
+            panel1.revalidate();
+            panel1.repaint();
         });
 
 
