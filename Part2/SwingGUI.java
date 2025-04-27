@@ -21,12 +21,15 @@ public class SwingGUI {
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel panel3 = new JPanel();
+        JPanel panel4 = new JPanel();
+        panel3.setLayout(new BoxLayout(panel3, BoxLayout.Y_AXIS));
 
 
         //names the panels
         tabbedPane.addTab("Horse Options", panel1);
         tabbedPane.addTab("Race Options", panel2);
-        tabbedPane.addTab("Statistics", panel3);
+        tabbedPane.addTab("Current Horse Stats", panel3);
+        tabbedPane.addTab("Race options", panel4);
 
 
         //vars for panel1
@@ -38,6 +41,8 @@ public class SwingGUI {
         JButton redirectPanel1 = new JButton("make a horse");
         JButton horseCustomisation = new JButton("Enter");
         Character[] selectedOption = {' '};
+        int[] horsesAttributes = {1, 1, 1};
+        Horse horse = new Horse('T', "temp", horsesAttributes);//used to display speed, stamina and cooldown
 
         //adds to panel1
         panel1.add(new JLabel("Enter Horse Character:"));
@@ -95,29 +100,37 @@ public class SwingGUI {
                 }
             }
             
-            panel1.revalidate();// Updates the panel's layout after adding or removing components
-            panel1.repaint();// Redraws the panel to show any visual changes
+            // Updates the panel's layout after adding or removing components
+            // Redraws the panel to show any visual changes
+            repaint(panel1);
         });
 
 
         //for panel2
         JButton horsePick = new JButton("Enter");
+        JButton redirectStats = new JButton("Show stats");
 
         //default text that appears when the user opens program
         //change when creating files that hold info about horses
         panel2.add(new JLabel("Please make a horse first"));
         panel2.add(redirectPanel1);
-        panel2.revalidate();
-        panel2.repaint();
+        repaint(panel2);
 
         //the button just redirects the user to panel1
         redirectPanel1.addActionListener(e -> {
             tabbedPane.setSelectedIndex(0);
         });
 
+        //panel 3
+        JButton back = new JButton("go Back");
+
+        back.addActionListener(e ->{
+            tabbedPane.setSelectedIndex(1);
+        });
+
+        //panel2
         //if button pressed it allows the user to customise the horse they picked
         horseCustomisation.addActionListener(e -> {
-            int[] horsesAttributes = new int[3];
             String[] placeholder = {""};
             //HorseInfo theHorse = horsesCreate.get(selectedOption[0]);
             horseArray[0] = horsesCreate.get(selectedOption[0]);//gets the reference of class user picked
@@ -128,7 +141,6 @@ public class SwingGUI {
                 String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
                 JComboBox<String> breed = new JComboBox<>(breeds);
                 panel2.add(new JLabel("Enter Horse Breed:"));
-                horsesAttributes[0] = 1;//make sure its not null
                 horseArray[0].setBreed(horsesAttributes[0]);
                 //when user presses on a new breed the breed turns to an int for horse class to use later
                 breed.addActionListener(f -> {
@@ -144,21 +156,29 @@ public class SwingGUI {
                             horsesAttributes[0] = 3;
                             break;
                     }
+                    horse.setBreed(horsesAttributes[0]);
                     //sets the breed every time user selects new breed
                     horseArray[0].setBreed(horsesAttributes[0]);
+                    dynamicHorseUpdates(panel3, horse, back);
                 });
                 panel2.add(breed);//adds the drop down
             }
-            horseArray[0].set2Stats(new int[]{horsesAttributes[0], 1, 1});//initial stats for a horse
+            horseArray[0].set2Stats(horsesAttributes);//initial stats for a horse
             panel2.add(new JLabel("Enter The Horses hoof:"));
-            customise(panel2, horseArray[0], horsesAttributes, 1);
+            customise(panel2, panel3, horse, horseArray[0], horsesAttributes, 1, back);
             panel2.add(new JLabel("Enter The Horses saddle:"));
-            customise(panel2, horseArray[0], horsesAttributes, 2);
+            customise(panel2, panel3, horse, horseArray[0], horsesAttributes, 2, back);
             panel2.add(horsePick);
-            panel2.revalidate();
-            panel2.repaint();
+            panel2.add(redirectStats);
+            repaint(panel2);
         });
 
+        redirectStats.addActionListener(e -> {
+            dynamicHorseUpdates(panel3, horse, back);
+            tabbedPane.setSelectedIndex(2);
+        });
+
+        //when the user is done with customising the horse they create a new instance of horse
         horsePick.addActionListener(e -> {
             char key = ' ';
             for (Map.Entry<Character, HorseInfo> entry : horsesCreate.entrySet()) {
@@ -187,9 +207,15 @@ public class SwingGUI {
             panel2.add(new JLabel("customise another horse"));
             selectId(horsesCreate, selectedOption, panel2);
             panel2.add(horseCustomisation);
-            panel2.revalidate();
-            panel2.repaint();
+            repaint(panel2);
         });
+
+        //panel4 should have a menu to add lanes and change race length
+        //when a lane appears the user can then add the specific horse to the lane
+        //when the horse is added they are removed from the arraylist or smthing
+        //then below have one that adds the horses 
+        //then a button to start the race
+        //dynamic updates
 
         // Add the tabbed pane to the frame
         frame.add(tabbedPane);
@@ -221,13 +247,15 @@ public class SwingGUI {
      * @param horsesAttributes array that holds the new changes
      * @param whichAttrbute determines if saddle or hoof is being changed
      */
-    private static void customise(JPanel panel2, HorseInfo theHorse, int[] horsesAttributes, int whichAttrbute){
+    private static void customise(JPanel panel2, JPanel panel3, Horse horse, HorseInfo theHorse, int[] horsesAttributes, int whichAttrbute, JButton back){
         Integer[] attributes = {1,2};
         JComboBox<Integer> attribute = new JComboBox<>(attributes);
 
         attribute.addActionListener(f -> {
             int number = (int) attribute.getSelectedItem();
             setAttributes(whichAttrbute, horsesAttributes, number, theHorse);
+            horse.setHS(horsesAttributes[1], horsesAttributes[2]);//doesnt update for some reason
+            dynamicHorseUpdates(panel3, horse, back);
         });
         panel2.add(attribute);
     }
@@ -246,5 +274,45 @@ public class SwingGUI {
             horsesAttributes[2] = number;
         }
         theHorse.set2Stats(horsesAttributes);
+    }
+
+    /**
+     *dynamically updates panel3 depending on which attributes the user selects
+     * 
+     * 
+     * @param number is the new stat
+     */
+    private static void dynamicHorseUpdates(JPanel panel3, Horse horse, JButton back){
+        panel3.removeAll();
+        double temp = Math.round(horse.getSpeed() * 100.0) / 100.0;
+        panel3.add(new JLabel("current speed is "+ temp));
+        temp = Math.round(horse.getStamina() * 100.0) / 100.0;
+        panel3.add(new JLabel("current stamina is "+temp));
+        temp = Math.round(horse.getCooldown() * 100.0) / 100.0;
+        panel3.add(new JLabel("current cooldown is "+temp));
+        temp = 0.25;
+        calculateFall(temp, horse);
+        panel3.add(new JLabel("minimum falling chance "+ temp*100 + "%"));
+        temp = 0.01 + 0.07;
+        panel3.add(new JLabel("maximum falling chance "+ temp*100 + "%"));
+        panel3.add(back);
+        repaint(panel3);
+        //just display speed, stamina and the horses cooldown as the user changes the customisation
+        //so i need to pass the breed, hoof and saddle
+        //or i can obtain it by accessing the class by using .get methods
+    }
+
+    private static void calculateFall(double temp, Horse horse){
+        if (horse.getHoof() == 1) {
+            temp *= 1.35;
+        }
+        else{
+            temp *= .85;
+        }
+    }
+
+    private static void repaint(JPanel panel){
+        panel.revalidate();
+        panel.repaint();
     }
 }
