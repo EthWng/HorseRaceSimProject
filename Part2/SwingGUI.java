@@ -278,9 +278,12 @@ public class SwingGUI {
 
     /**
      *dynamically updates panel3 depending on which attributes the user selects
+     *just display speed, stamina and the horses cooldown as the user changes the customisation
+     *so i need to pass the breed, hoof and saddle
+     *or i can obtain it by accessing the class by using .get methods
      * 
      * 
-     * @param number is the new stat
+     * @param back button that redirects use to panel2
      */
     private static void dynamicHorseUpdates(JPanel panel3, Horse horse, JButton back){
         panel3.removeAll();
