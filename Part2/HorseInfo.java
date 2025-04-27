@@ -1,3 +1,4 @@
+//just a temporary holder for the horse class
 class HorseInfo {
     String name;
     int[] stats = new int[3];//breed, hoof, saddle
@@ -10,11 +11,17 @@ class HorseInfo {
         this.stats[0] = breed;
     }
     
+    /**
+     * changes the stats using for loop
+     * 
+     * 
+     */
     public void set2Stats(int[] stats){
         for (int i = 1; i < stats.length; i++) {
             if (stats[i] > 0) {
                 this.stats[i] = stats[i];
             }
+            //this in method because error turning attributes to 0 when customising
             else{
                 this.stats[i] = 1;
             }
@@ -25,12 +32,6 @@ class HorseInfo {
         return this.name;
     }
 
-    /**
-     * returns the stats of a specific part of the horse
-     * e.g the int of the breed, the hoof or the saddle
-     * 
-     * 
-     */
     public int[] getStats(){
         return this.stats;
     }
