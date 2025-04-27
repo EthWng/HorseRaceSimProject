@@ -10,7 +10,6 @@ public class Horse
     //Fields of class Horse
     private String name;
     private int breed; //one of 3, constant
-    private static String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
     private double raceLength;
     private int saddle;
     private int hoof;
@@ -69,10 +68,6 @@ public class Horse
     public void goBackToStart()
     {
         this.distance = 0;
-    }
-
-    public String getBreed(){
-        return breeds[this.breed];
     }
     
     public boolean hasFallen()
