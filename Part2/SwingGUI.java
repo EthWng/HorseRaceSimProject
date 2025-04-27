@@ -1,10 +1,14 @@
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
 
 public class SwingGUI {
     public static void main(String[] args) {
-        HashMap<Character, HorseInfo> horsesCreate = new HashMap<>();
-        final HorseInfo[] horseArray = {new HorseInfo(null)};//remove once testing over
+        HashMap<Character, HorseInfo> horsesCreate = new HashMap<>();//the char that the horse uses points to its HorseInfo class
+        HashMap<Character, Horse> horses = new HashMap<>();//the char that the horse uses points to its Horse class
+        final HorseInfo[] horseArray = {new HorseInfo(null)};//used so different .addactionlisteners can use it 
+
         // Create main window
         JFrame frame = new JFrame("Horse Race");
         frame.setSize(1280, 720);
@@ -13,42 +17,44 @@ public class SwingGUI {
         // Create the tabbed pane
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Create two panels
+        // Create three panels
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel panel3 = new JPanel();
 
 
-        // Add panels to tabs
+        //names the panels
         tabbedPane.addTab("Horse Options", panel1);
         tabbedPane.addTab("Race Options", panel2);
         tabbedPane.addTab("Statistics", panel3);
 
 
-        //for panel1
-        JTextField inputSymbolField = new JTextField(10);
+        //vars for panel1
+        JTextField inputSymbolField = new JTextField(1);
         JTextField inputNameField = new JTextField(10);
         JButton horseCreation = new JButton("Enter");
 
-        //panel2
+        //vars for panel2
         JButton redirectPanel1 = new JButton("make a horse");
         JButton horseCustomisation = new JButton("Enter");
         Character[] selectedOption = {' '};
 
-        //panel1
+        //adds to panel1
         panel1.add(new JLabel("Enter Horse Character:"));
         panel1.add(inputSymbolField);
         panel1.add(new JLabel("Enter The Horses name:"));
         panel1.add(inputNameField);
         panel1.add(horseCreation);
 
+        //if horsecreation button pressed this function runs
         horseCreation.addActionListener(e -> {
-            String symbol = inputSymbolField.getText().trim();
+            String symbol = inputSymbolField.getText().trim();//removes white space before and after text
             String name = inputNameField.getText().trim();
-            inputSymbolField.setText("");
+            inputSymbolField.setText("");//if the user presses the button after creating a horse
             inputNameField.setText("");
-            panel1.removeAll();
+            panel1.removeAll();//removes all previous text for a clean window
             
+            //the symbol for the horse needs to be 1 character
             if (symbol.length() != 1 || name.equals("")) {
                 // If the user didn't enter exactly one character
                 panel1.add(new JLabel("Please enter a single character:"));
@@ -60,10 +66,13 @@ public class SwingGUI {
             else {
                 char chosenChar = symbol.charAt(0);
                 
+                //if theres a horse that occupies the character picked
                 if (horsesCreate.containsKey(chosenChar)) {
                     panel1.add(new JLabel("The character " + chosenChar + " is unavailable."));
                     panel1.add(horseCreation);
-                }else {
+                }
+                //else it creates the horse
+                else {
                     HorseInfo ref = new HorseInfo(name);
                     horsesCreate.put(chosenChar, ref);
                     panel1.add(new JLabel("<html>You have picked: " +chosenChar+"<br>Do you want to add another horse.</html>"));
@@ -72,6 +81,7 @@ public class SwingGUI {
                     int once = 0;
 
                     //replaces text in panel2
+                    //if the user has entered a horse the new text will appear 
                     if (once == 0) {
                         //replace breeds with horsesCreate.getkey() all 
                         once++;
@@ -85,37 +95,42 @@ public class SwingGUI {
                 }
             }
             
-            panel1.revalidate();
-            panel1.repaint();
+            panel1.revalidate();// Updates the panel's layout after adding or removing components
+            panel1.repaint();// Redraws the panel to show any visual changes
         });
 
 
         //for panel2
         JButton horsePick = new JButton("Enter");
 
-        if (horsesCreate.size() == 0) {
-            panel2.add(new JLabel("Please make a horse first"));
-            panel2.add(redirectPanel1);
-            panel2.revalidate();
-            panel2.repaint();
-        }
+        //default text that appears when the user opens program
+        //change when creating files that hold info about horses
+        panel2.add(new JLabel("Please make a horse first"));
+        panel2.add(redirectPanel1);
+        panel2.revalidate();
+        panel2.repaint();
 
+        //the button just redirects the user to panel1
         redirectPanel1.addActionListener(e -> {
             tabbedPane.setSelectedIndex(0);
         });
 
+        //if button pressed it allows the user to customise the horse they picked
         horseCustomisation.addActionListener(e -> {
             int[] horsesAttributes = new int[3];
             String[] placeholder = {""};
             //HorseInfo theHorse = horsesCreate.get(selectedOption[0]);
-            horseArray[0] = horsesCreate.get(selectedOption[0]);
+            horseArray[0] = horsesCreate.get(selectedOption[0]);//gets the reference of class user picked
             panel2.removeAll();
+            //if the horse doesnt have a set breed the are allowed to customise it 
             if (horseArray[0].getStats()[0] == 0) {
+                //creates a dropdown of the breeds
                 String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
                 JComboBox<String> breed = new JComboBox<>(breeds);
                 panel2.add(new JLabel("Enter Horse Breed:"));
                 horsesAttributes[0] = 1;//make sure its not null
                 horseArray[0].setBreed(horsesAttributes[0]);
+                //when user presses on a new breed the breed turns to an int for horse class to use later
                 breed.addActionListener(f -> {
                     placeholder[0] = (String) breed.getSelectedItem();
                     switch (placeholder[0]) {
@@ -129,9 +144,10 @@ public class SwingGUI {
                             horsesAttributes[0] = 3;
                             break;
                     }
+                    //sets the breed every time user selects new breed
                     horseArray[0].setBreed(horsesAttributes[0]);
                 });
-                panel2.add(breed);
+                panel2.add(breed);//adds the drop down
             }
             horseArray[0].set2Stats(new int[]{horsesAttributes[0], 1, 1});//initial stats for a horse
             panel2.add(new JLabel("Enter The Horses hoof:"));
@@ -144,6 +160,29 @@ public class SwingGUI {
         });
 
         horsePick.addActionListener(e -> {
+            char key = ' ';
+            for (Map.Entry<Character, HorseInfo> entry : horsesCreate.entrySet()) {
+                if (entry.getValue().equals(horseArray[0])) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+            //if no horse with character key it creates a new instance of horse
+            if (horses.get(key) == null) {
+                Horse temp = new Horse(key, horseArray[0].getName(), horseArray[0].getStats()); 
+                horses.put(key, temp);
+            }
+            //else it edits the existing horse
+            else{
+                horses.get(key).setHS(horseArray[0].getStats()[1], horseArray[0].getStats()[2]);
+            }
+
+            //testing purposes
+            System.out.println(Arrays.toString(horseArray[0].getStats()));
+            System.out.println(horses.get(key));
+            System.out.println(horses.get(key).getSpeed());
+            //
+
             panel2.removeAll();
             panel2.add(new JLabel("customise another horse"));
             selectId(horsesCreate, selectedOption, panel2);
@@ -158,6 +197,13 @@ public class SwingGUI {
         frame.setVisible(true);
     }
 
+    /**
+     * method for program to create a dropdown of all the horses user has created
+     * 
+     * @param horsesCreate used to get all the keys and put them in the dropdown
+     * @param selectedOption used to hold the value of the key picked
+     * @param panel2 the panel the dropdowns being added to
+     */
     private static void selectId(HashMap<Character, HorseInfo> horsesCreate, Character[] selectedOption, JPanel panel2){
         Character[] breeds = horsesCreate.keySet().toArray(new Character[0]);
         selectedOption[0] = horsesCreate.keySet().iterator().next();//makes sure its not null
@@ -168,6 +214,13 @@ public class SwingGUI {
         panel2.add(horseID);
     }
 
+    /**
+     *creates dropdown to pick the hoof and saddle of horse
+     * 
+     * @param theHorse used to pass to the setattributes method
+     * @param horsesAttributes array that holds the new changes
+     * @param whichAttrbute determines if saddle or hoof is being changed
+     */
     private static void customise(JPanel panel2, HorseInfo theHorse, int[] horsesAttributes, int whichAttrbute){
         Integer[] attributes = {1,2};
         JComboBox<Integer> attribute = new JComboBox<>(attributes);
@@ -179,6 +232,12 @@ public class SwingGUI {
         panel2.add(attribute);
     }
 
+    /**
+     *sets the new stats
+     * 
+     * 
+     * @param number is the new stat
+     */
     private static void setAttributes(int whichAttrbute, int[] horsesAttributes, int number, HorseInfo theHorse){
         if (whichAttrbute == 1){
             horsesAttributes[whichAttrbute] = number;
