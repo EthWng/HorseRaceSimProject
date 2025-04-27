@@ -27,15 +27,14 @@ public class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(char horseSymbol, String horseName, int breed, int hoof, int saddle)
+    public Horse(char horseSymbol, String horseName, int[] BHS)
     {
         this.symbol = horseSymbol;
         this.name = horseName;
         this.confidence = 0.3;
         this.flag = false;
-        this.breed = breed;
-        setHoof(hoof);
-        setSaddle(saddle); 
+        this.breed = BHS[0];
+        setHS(BHS[1], BHS[2]);
     }
     
     //Other methods of class Horse
@@ -130,27 +129,23 @@ public class Horse
     }
 
     /***
-     * makes horse move slower but increases stamina
+     * hoof makes horse move faste/slower but reduces/increases stability
+     * hoof 1 makes horse move faster *1.2 but more unstable *1.35 confidence decreases .02
+     * hoof 2 makes horse move slower *0.85 but more stable *0.75 confidence increase by .03
+     * saddle makes horse move slower but increases stamina
      * saddle 1 reduces speed by *.90 increases stamina by *1.15
      * saddle 2 reduces speed by *.85 increases stamina by *1.3
      * 
      *
      */
-    public void setSaddle(int saddle){
+    public void setHS(int hoof, int saddle){
+        this.hoof = hoof;
         this.saddle = saddle;
         setSpeed();
     }
 
-    /***
-     * makes horse move faste/slower but reduces/increases stability
-     * hoof 1 makes horse move faster *1.2 but more unstable *1.35 confidence decreases .02
-     * hoof 2 makes horse move slower *0.85 but more stable *0.75 confidence increase by .03
-     * 
-     *
-     */
-    public void setHoof(int hoof){
-        this.hoof = hoof;
-        setSpeed();
+    public double getSpeed(){
+        return this.speed;
     }
 
     /***
@@ -161,11 +156,11 @@ public class Horse
      */
     public void setSpeed(){
         if (this.breed == 1){
-            this.speed = .75;
+            this.speed = 1;
             setConfidence(this.confidence+.08);
         }
         else if (this.breed == 1){
-            this.speed = 1;
+            this.speed = 1.2;
             setConfidence(this.confidence+.1);
         }
         else{
@@ -175,6 +170,7 @@ public class Horse
 
 
         this.stamina = (this.raceLength / (this.speed*2*this.confidence));
+        //change so stamina doesnt rely on racelength smthing like 25
 
         //hoof can only be 1 or 2
         if (this.hoof == 1) {
