@@ -12,8 +12,7 @@ import java.util.Random;
  */
 public class Race
 {
-    private int raceLength;
-    //private double raceLength;
+    private double raceLength;
     private Horse[] laneHorse;//var containing all horses
     private int numberOfLanes;//allows more lanes
     private int season;//random season
@@ -108,7 +107,6 @@ public class Race
                 theHorse.setConfidence(theHorse.getConfidence()-.15);
                 break;
         }
-        theHorse.setRaceLength(raceLength);
     }
     
 
@@ -371,7 +369,7 @@ public class Race
     {
         System.out.print('\u000C');  //clear the terminal window
         
-        multiplePrint('=',raceLength); //top edge of track
+        multiplePrint('=',(int) raceLength); //top edge of track
         System.out.println();
         
         for (Horse horse : laneHorse) {
@@ -379,7 +377,7 @@ public class Race
             System.out.println();
         }
         
-        multiplePrint('=',raceLength); //bottom edge of track
+        multiplePrint('=',(int) raceLength); //bottom edge of track
         System.out.println();    
     }
     
