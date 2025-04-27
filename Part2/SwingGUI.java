@@ -4,8 +4,7 @@ import javax.swing.*;
 public class SwingGUI {
     public static void main(String[] args) {
         HashMap<Character, HorseInfo> horsesCreate = new HashMap<>();
-        int[] horsesCustomise = new int[3];
-        //<<A, name1>, {1, 1, 1}>, <<B, name2>, {2, 2, 2}>, ...
+        final HorseInfo[] horseArray = {new HorseInfo(null)};//remove once testing over
         // Create main window
         JFrame frame = new JFrame("Horse Race");
         frame.setSize(1280, 720);
@@ -34,7 +33,7 @@ public class SwingGUI {
         //panel2
         JButton redirectPanel1 = new JButton("make a horse");
         JButton horseCustomisation = new JButton("Enter");
-        String[] selectedOption = {""};
+        Character[] selectedOption = {' '};
 
         //panel1
         panel1.add(new JLabel("Enter Horse Character:"));
@@ -75,15 +74,10 @@ public class SwingGUI {
                     //replaces text in panel2
                     if (once == 0) {
                         //replace breeds with horsesCreate.getkey() all 
-                        Character[] breeds = horsesCreate.keySet();
-                        JComboBox<String> horseID = new JComboBox<>(breeds);
                         once++;
                         panel2.removeAll();
                         panel2.add(new JLabel("Which Horse do you want to customise"));
-                        horseID.addActionListener(f -> {
-                            selectedOption[0] = (String) horseID.getSelectedItem();
-                        });
-                        panel2.add(horseID);
+                        selectId(horsesCreate, selectedOption, panel2);
                         panel2.add(horseCustomisation);
                         //button brings it to the horses customisation, can change breed hoof and saddle
                         //if breed == null (stats[0] == null) then you can set it if != cannot set breed 
@@ -97,11 +91,7 @@ public class SwingGUI {
 
 
         //for panel2
-        JTextField breed = new JTextField(10);
-        JTextField hoof = new JTextField(10);
-        JTextField saddle = new JTextField(10);
-        String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
-        JComboBox<String> horseID = new JComboBox<>(breeds);
+        JButton horsePick = new JButton("Enter");
 
         if (horsesCreate.size() == 0) {
             panel2.add(new JLabel("Please make a horse first"));
@@ -115,27 +105,87 @@ public class SwingGUI {
         });
 
         horseCustomisation.addActionListener(e -> {
-            horsesCreate.get(selectedOption[0]);
-            panel2.add(new JLabel("Enter Horse:"));
-            panel2.add(breed);
-            panel2.add(new JLabel("Enter The Horses name:"));
-            panel2.add(hoof);
-            panel2.add(new JLabel("Enter The Horses name:"));
-            panel2.add(saddle);
-            panel2.add(horseCustomisation);
+            int[] horsesAttributes = new int[3];
+            String[] placeholder = {""};
+            //HorseInfo theHorse = horsesCreate.get(selectedOption[0]);
+            horseArray[0] = horsesCreate.get(selectedOption[0]);
+            panel2.removeAll();
+            if (horseArray[0].getStats()[0] == 0) {
+                String[] breeds = {"Thoroughbred", "Arabian", "Quarter Horse"};
+                JComboBox<String> breed = new JComboBox<>(breeds);
+                panel2.add(new JLabel("Enter Horse Breed:"));
+                horsesAttributes[0] = 1;//make sure its not null
+                horseArray[0].setBreed(horsesAttributes[0]);
+                breed.addActionListener(f -> {
+                    placeholder[0] = (String) breed.getSelectedItem();
+                    switch (placeholder[0]) {
+                        case "Thoroughbred":
+                            horsesAttributes[0] = 1;
+                            break;
+                        case "Arabian":
+                            horsesAttributes[0] = 2;
+                            break;
+                        case "Quarter Horse":
+                            horsesAttributes[0] = 3;
+                            break;
+                    }
+                    horseArray[0].setBreed(horsesAttributes[0]);
+                });
+                panel2.add(breed);
+            }
+            horseArray[0].set2Stats(new int[]{horsesAttributes[0], 1, 1});//initial stats for a horse
+            panel2.add(new JLabel("Enter The Horses hoof:"));
+            customise(panel2, horseArray[0], horsesAttributes, 1);
+            panel2.add(new JLabel("Enter The Horses saddle:"));
+            customise(panel2, horseArray[0], horsesAttributes, 2);
+            panel2.add(horsePick);
+            panel2.revalidate();
+            panel2.repaint();
         });
 
-        /*panel2.add(new JLabel("Enter Horse:"));
-        panel2.add(breed);
-        panel2.add(new JLabel("Enter The Horses name:"));
-        panel2.add(hoof);
-        panel2.add(new JLabel("Enter The Horses name:"));
-        panel2.add(saddle);
-        panel2.add(horseCustomisation);*/
+        horsePick.addActionListener(e -> {
+            panel2.removeAll();
+            panel2.add(new JLabel("customise another horse"));
+            selectId(horsesCreate, selectedOption, panel2);
+            panel2.add(horseCustomisation);
+            panel2.revalidate();
+            panel2.repaint();
+        });
 
         // Add the tabbed pane to the frame
         frame.add(tabbedPane);
 
         frame.setVisible(true);
+    }
+
+    private static void selectId(HashMap<Character, HorseInfo> horsesCreate, Character[] selectedOption, JPanel panel2){
+        Character[] breeds = horsesCreate.keySet().toArray(new Character[0]);
+        selectedOption[0] = horsesCreate.keySet().iterator().next();//makes sure its not null
+        JComboBox<Character> horseID = new JComboBox<>(breeds);
+        horseID.addActionListener(f -> {
+            selectedOption[0] = (Character) horseID.getSelectedItem();
+        });
+        panel2.add(horseID);
+    }
+
+    private static void customise(JPanel panel2, HorseInfo theHorse, int[] horsesAttributes, int whichAttrbute){
+        Integer[] attributes = {1,2};
+        JComboBox<Integer> attribute = new JComboBox<>(attributes);
+
+        attribute.addActionListener(f -> {
+            int number = (int) attribute.getSelectedItem();
+            setAttributes(whichAttrbute, horsesAttributes, number, theHorse);
+        });
+        panel2.add(attribute);
+    }
+
+    private static void setAttributes(int whichAttrbute, int[] horsesAttributes, int number, HorseInfo theHorse){
+        if (whichAttrbute == 1){
+            horsesAttributes[whichAttrbute] = number;
+        }
+        else{
+            horsesAttributes[2] = number;
+        }
+        theHorse.set2Stats(horsesAttributes);
     }
 }
