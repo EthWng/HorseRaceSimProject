@@ -10,7 +10,6 @@ public class Horse
     //Fields of class Horse
     private String name;
     private int breed; //one of 3, constant
-    private double raceLength;
     private int saddle;
     private int hoof;
     private char symbol;
@@ -119,11 +118,6 @@ public class Horse
         this.symbol = newSymbol;
     }
 
-    public void setRaceLength(double raceLength){
-        this.raceLength = raceLength;
-        setSpeed();
-    }
-
     public int getHoof(){
         return this.hoof;
     }
@@ -144,8 +138,26 @@ public class Horse
         setSpeed();
     }
 
+    /***
+     * only used by the gui when the user is selecting inital breed
+     * 
+     *
+     */
+    public void setBreed(int breed){
+        this.breed = breed;
+        setSpeed();
+    }
+
     public double getSpeed(){
         return this.speed;
+    }
+
+    public double getStamina(){
+        return this.stamina;
+    }
+
+    public double getCooldown(){
+        return this.cooldown;
     }
 
     /***
@@ -155,11 +167,12 @@ public class Horse
      * 
      */
     public void setSpeed(){
+        this.speed = 0;//reset speed
         if (this.breed == 1){
             this.speed = 1;
             setConfidence(this.confidence+.08);
         }
-        else if (this.breed == 1){
+        else if (this.breed == 2){
             this.speed = 1.2;
             setConfidence(this.confidence+.1);
         }
@@ -169,33 +182,33 @@ public class Horse
         }
 
 
-        this.stamina = (this.raceLength / (this.speed*2*this.confidence));
+        this.stamina = (10 / (this.speed*2*this.confidence));
         //change so stamina doesnt rely on racelength smthing like 25
 
         //hoof can only be 1 or 2
-        if (this.hoof == 1) {
-            this.speed *= 1.2;
-            setConfidence(this.confidence -= .05);
-        }
-        else{
+        if (this.hoof == 2){
             this.speed *= .85;
             setConfidence(this.confidence += .04);
         }
+        else{
+            this.speed *= 1.2;
+            setConfidence(this.confidence -= .05);
+        }
 
         //saddle can only be 1 or 2
-        if (this.saddle == 1) {
-            this.speed *=.9;
-            this.stamina *= 1.15;
-            setConfidence(this.confidence += .03);
-        }
-        else{
+        if (this.saddle == 2){
             this.speed *=.85;
             this.stamina *= 1.3;
             setConfidence(this.confidence += .04);
         }
+        else{
+            this.speed *=.9;
+            this.stamina *= 1.15;
+            setConfidence(this.confidence += .03);
+        }
 
         this.staminaLose = this.stamina;
-        this.cooldown = (this.speed * 1.5);
+        this.cooldown = (this.stamina * this.confidence);
         this.cooldownLose = this.cooldown;
     }  
 }
