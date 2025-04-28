@@ -1,3 +1,4 @@
+import java.awt.GridBagConstraints;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,14 @@ public class SwingGUI {
         // Create the tabbed pane
         JTabbedPane tabbedPane = new JTabbedPane();
 
+        // Create a GridBagConstraints object
+        GridBagConstraints displayRace = new GridBagConstraints();
+
         // Create three panels
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel panel3 = new JPanel();
-        JPanel panel4 = new JPanel();
+        JPanel panel4 = new JPanel();//use the gridconstrints
         panel3.setLayout(new BoxLayout(panel3, BoxLayout.Y_AXIS));
 
 
@@ -133,6 +137,12 @@ public class SwingGUI {
         //panel2
         //if button pressed it allows the user to customise the horse they picked
         horseCustomisation.addActionListener(e -> {
+            horseArray[0] = horsesCreate.get(stat[0]);//gets the reference of class user picked
+
+            for (int i = 1; i < horsesAttributes.length; i++) {
+                horsesAttributes[i] = 1;
+            }
+
             if (horseArray[0].getStats()[0] == 0) {
                 horsesAttributes[0] = 1;
             }
@@ -142,7 +152,6 @@ public class SwingGUI {
             horseArray[0].set2Stats(horsesAttributes);//initial stats for a horse
             String[] placeholder = {""};
             //HorseInfo theHorse = horsesCreate.get(stat[0]);
-            horseArray[0] = horsesCreate.get(stat[0]);//gets the reference of class user picked
             panel2.removeAll();
             //if the horse doesnt have a set breed the are allowed to customise it 
             if (horseArray[0].getStats()[0] == 0) {
