@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 
+//system.outs are for testing
 public class SwingGUI {
     public static void main(String[] args) {
         HashMap<Character, HorseInfo> horsesCreate = new HashMap<>();//the char that the horse uses points to its HorseInfo class
@@ -50,9 +51,6 @@ public class SwingGUI {
         panel1.add(new JLabel("Enter The Horses name:"));
         panel1.add(inputNameField);
         panel1.add(horseCreation);
-
-        //for panel4
-        int[] laneAmount = {};
 
         //if horsecreation button pressed this function runs
         horseCreation.addActionListener(e -> {
@@ -135,10 +133,12 @@ public class SwingGUI {
         //panel2
         //if button pressed it allows the user to customise the horse they picked
         horseCustomisation.addActionListener(e -> {
-            for (int i = 0; i < horsesAttributes.length; i++) {
-                horsesAttributes[i] = 1;
+            if (horseArray[0].getStats()[0] == 0) {
+                horsesAttributes[0] = 1;
             }
-            horsesAttributes[0] = horseArray[0].getStats()[0];
+            else{
+                horsesAttributes[0] = horseArray[0].getStats()[0];
+            }
             horseArray[0].set2Stats(horsesAttributes);//initial stats for a horse
             String[] placeholder = {""};
             //HorseInfo theHorse = horsesCreate.get(stat[0]);
@@ -205,11 +205,10 @@ public class SwingGUI {
                 horses.get(key).setHS(horseArray[0].getStats()[1], horseArray[0].getStats()[2]);
             }
 
-            //testing purposes
             System.out.println(Arrays.toString(horseArray[0].getStats()));
             System.out.println(horses.get(key));
             System.out.println(horses.get(key).getSpeed());
-            //
+
 
             panel2.removeAll();
             panel2.add(new JLabel("customise another horse"));
@@ -235,8 +234,51 @@ public class SwingGUI {
         //then below have one that adds the horses 
         //then a button to start the race
         panel4.add(new JLabel("Please create & customise at least 2 horses"));
+        JButton startRace = new JButton("Display race");
         //make a drop down 1-the number of horses in hashmap
         //for the race length make the user enter a number 10-window length
+
+        showRace.addActionListener(e->{
+            panel4.removeAll();
+            panel4.add(new JLabel("how many lanes do you want to add"));
+            panel4.add(laneNum);
+            panel4.add(new JLabel("Long do you want to make the race"));
+            panel4.add(raceLen);
+            panel4.add(showRace);
+            String[] raceInfo = {laneNum.getText().trim(), raceLen.getText().trim()};
+            int[] raceInfoint = new int[2];//rows, length
+
+            //runs twice so the catch could run twice
+            //remove the previous error
+            int j = 0;
+            for (String info : raceInfo) {
+                try {
+                    raceInfoint[j++] = Integer.parseInt(info);
+                } catch (NumberFormatException | NullPointerException f) {
+                    JLabel error = new JLabel("please enter both lanes and length in a whole number");
+                    panel4.remove(error);
+                    panel4.add(error);
+                }
+            }
+
+            if (raceInfoint[0] < 2 || raceInfoint[1] < 10 || raceInfoint[1] > 100) {
+                System.out.println(Arrays.toString(raceInfoint));
+                panel4.add(new JLabel("there needs to be atleast 2 lanes"));
+                panel4.add(new JLabel("the race length must be between 10 and 100"));
+            }
+            else{
+                Race race = new Race(raceInfoint[1], raceInfoint[0], panel4);
+                race.printRace();//prints race in the terminal need to change to gui
+                //make an arraylist that holds the keys
+                panel4.add(startRace);
+            }
+
+            repaint(panel4);
+        });
+
+        startRace.addActionListener(e->{
+
+        });
 
 
         // Add the tabbed pane to the frame
@@ -325,6 +367,12 @@ public class SwingGUI {
         repaint(panel3);
     }
 
+    /**
+     * calculates the chances of falling
+     * 
+     * 
+     * @param temp holder for the calculations
+     */
     private static double calculateFall(double temp, Horse horse){
         if (horse.getHoof() == 1) {
             temp *= 1.35;
@@ -335,6 +383,12 @@ public class SwingGUI {
         return temp*horse.getConfidence()*horse.getConfidence()*100;
     }
 
+    /**
+     * Updates the panel's layout after adding or removing components
+     *  Redraws the panel to show any visual changes
+     * 
+     * 
+     */
     private static void repaint(JPanel panel){
         panel.revalidate();
         panel.repaint();
