@@ -19,7 +19,6 @@ public class Race
     private int season;//random season
     private double weatherChance;//chance of a weather event depends on season 
     private int weather;//final weather event
-    private JPanel panel;
 
 
     /**
@@ -29,7 +28,7 @@ public class Race
      * @param distance the length of the racetrack (in metres/yards...)
      * @param lanes the number of lanes of the racetrack
      */
-    public Race(int distance, int lanes, JPanel paneltemp)
+    public Race(int distance, int lanes)
     {
         // initialise instance variables
         raceLength = distance;
@@ -39,7 +38,6 @@ public class Race
         for (int i = 0; i < lanes; i++) {
             laneHorse[i] = null;
         }
-        panel = paneltemp;
     }
 
 
@@ -111,6 +109,23 @@ public class Race
                 break;
         }
     }
+
+    /**
+     * Adds a horse to the race in a given lane
+     * 
+     * @param theHorse the horse to be added to the race
+     * @param laneNumber the lane that the horse will be added to
+     */
+    public void addHorse(Horse theHorse, int laneNumber)
+    {
+
+        if (laneNumber > numberOfLanes) {
+            System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
+        }
+        else{
+            laneHorse[laneNumber-1] = theHorse;
+        }
+    }
     
 
     /**
@@ -130,6 +145,7 @@ public class Race
         for (Horse horse : laneHorse) {
             if (horse != null) {
                 horse.goBackToStart();
+                confidenceChange(horse);
                 nullHorses--;//if its not null counter goes down
             }
         }
