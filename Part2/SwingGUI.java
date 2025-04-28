@@ -27,7 +27,7 @@ public class SwingGUI {
 
         //names the panels
         tabbedPane.addTab("Horse Options", panel1);
-        tabbedPane.addTab("Race Options", panel2);
+        tabbedPane.addTab("Horse customisation", panel2);
         tabbedPane.addTab("Current Horse Stats", panel3);
         tabbedPane.addTab("Race options", panel4);
 
@@ -40,7 +40,7 @@ public class SwingGUI {
         //vars for panel2
         JButton redirectPanel1 = new JButton("make a horse");
         JButton horseCustomisation = new JButton("Enter");
-        Character[] selectedOption = {' '};
+        Character[] stat = {' '};
         int[] horsesAttributes = {1, 1, 1};
         Horse horse = new Horse('T', "temp", horsesAttributes);//used to display speed, stamina and cooldown
 
@@ -50,6 +50,9 @@ public class SwingGUI {
         panel1.add(new JLabel("Enter The Horses name:"));
         panel1.add(inputNameField);
         panel1.add(horseCreation);
+
+        //for panel4
+        int[] laneAmount = {};
 
         //if horsecreation button pressed this function runs
         horseCreation.addActionListener(e -> {
@@ -83,20 +86,16 @@ public class SwingGUI {
                     panel1.add(new JLabel("<html>You have picked: " +chosenChar+"<br>Do you want to add another horse.</html>"));
                     panel1.add(horseCreation);
                     System.out.println(horsesCreate.get(chosenChar));
-                    int once = 0;
 
                     //replaces text in panel2
                     //if the user has entered a horse the new text will appear 
-                    if (once == 0) {
-                        //replace breeds with horsesCreate.getkey() all 
-                        once++;
-                        panel2.removeAll();
-                        panel2.add(new JLabel("Which Horse do you want to customise"));
-                        selectId(horsesCreate, selectedOption, panel2);
-                        panel2.add(horseCustomisation);
-                        //button brings it to the horses customisation, can change breed hoof and saddle
-                        //if breed == null (stats[0] == null) then you can set it if != cannot set breed 
-                    }
+                    //replace breeds with horsesCreate.getkey() all 
+                    panel2.removeAll();
+                    panel2.add(new JLabel("Which Horse do you want to customise"));
+                    selectId(horsesCreate, stat, panel2);
+                    panel2.add(horseCustomisation);
+                    //button brings it to the horses customisation, can change breed hoof and saddle
+                    //if breed == null (stats[0] == null) then you can set it if != cannot set breed 
                 }
             }
             
@@ -128,12 +127,22 @@ public class SwingGUI {
             tabbedPane.setSelectedIndex(1);
         });
 
+        //panel4
+        JTextField laneNum = new JTextField(2);
+        JTextField raceLen = new JTextField(2);
+        JButton showRace = new JButton("Display race");
+
         //panel2
         //if button pressed it allows the user to customise the horse they picked
         horseCustomisation.addActionListener(e -> {
+            for (int i = 0; i < horsesAttributes.length; i++) {
+                horsesAttributes[i] = 1;
+            }
+            horsesAttributes[0] = horseArray[0].getStats()[0];
+            horseArray[0].set2Stats(horsesAttributes);//initial stats for a horse
             String[] placeholder = {""};
-            //HorseInfo theHorse = horsesCreate.get(selectedOption[0]);
-            horseArray[0] = horsesCreate.get(selectedOption[0]);//gets the reference of class user picked
+            //HorseInfo theHorse = horsesCreate.get(stat[0]);
+            horseArray[0] = horsesCreate.get(stat[0]);//gets the reference of class user picked
             panel2.removeAll();
             //if the horse doesnt have a set breed the are allowed to customise it 
             if (horseArray[0].getStats()[0] == 0) {
@@ -163,7 +172,6 @@ public class SwingGUI {
                 });
                 panel2.add(breed);//adds the drop down
             }
-            horseArray[0].set2Stats(horsesAttributes);//initial stats for a horse
             panel2.add(new JLabel("Enter The Horses hoof:"));
             customise(panel2, panel3, horse, horseArray[0], horsesAttributes, 1, back);
             panel2.add(new JLabel("Enter The Horses saddle:"));
@@ -205,17 +213,31 @@ public class SwingGUI {
 
             panel2.removeAll();
             panel2.add(new JLabel("customise another horse"));
-            selectId(horsesCreate, selectedOption, panel2);
+            selectId(horsesCreate, stat, panel2);
             panel2.add(horseCustomisation);
             repaint(panel2);
+
+            if (horses.size() >= 2) {
+                panel4.removeAll();
+                panel4.add(new JLabel("how many lanes do you want to add"));
+                panel4.add(laneNum);
+                panel4.add(new JLabel("Long do you want to make the race"));
+                panel4.add(raceLen);
+                panel4.add(showRace);
+                repaint(panel4);
+            }
         });
 
         //panel4 should have a menu to add lanes and change race length
-        //when a lane appears the user can then add the specific horse to the lane
+        //button to show race layout updates panel4
+        //the user can then add the specific horse to the lane
         //when the horse is added they are removed from the arraylist or smthing
         //then below have one that adds the horses 
         //then a button to start the race
-        //dynamic updates
+        panel4.add(new JLabel("Please create & customise at least 2 horses"));
+        //make a drop down 1-the number of horses in hashmap
+        //for the race length make the user enter a number 10-window length
+
 
         // Add the tabbed pane to the frame
         frame.add(tabbedPane);
@@ -227,17 +249,17 @@ public class SwingGUI {
      * method for program to create a dropdown of all the horses user has created
      * 
      * @param horsesCreate used to get all the keys and put them in the dropdown
-     * @param selectedOption used to hold the value of the key picked
+     * @param stat used to hold the value of the key picked
      * @param panel2 the panel the dropdowns being added to
      */
-    private static void selectId(HashMap<Character, HorseInfo> horsesCreate, Character[] selectedOption, JPanel panel2){
+    private static void selectId(HashMap<Character, HorseInfo> horsesCreate, Character[] stat, JPanel panel){
         Character[] breeds = horsesCreate.keySet().toArray(new Character[0]);
-        selectedOption[0] = horsesCreate.keySet().iterator().next();//makes sure its not null
+        stat[0] = horsesCreate.keySet().iterator().next();//makes sure its not null
         JComboBox<Character> horseID = new JComboBox<>(breeds);
         horseID.addActionListener(f -> {
-            selectedOption[0] = (Character) horseID.getSelectedItem();
+            stat[0] = (Character) horseID.getSelectedItem();
         });
-        panel2.add(horseID);
+        panel.add(horseID);
     }
 
     /**
@@ -293,25 +315,24 @@ public class SwingGUI {
         panel3.add(new JLabel("current stamina is "+temp));
         temp = Math.round(horse.getCooldown() * 100.0) / 100.0;
         panel3.add(new JLabel("current cooldown is "+temp));
-        temp = 0.25;
-        calculateFall(temp, horse);
-        panel3.add(new JLabel("minimum falling chance "+ temp*100 + "%"));
-        temp = 0.01 + 0.07;
-        panel3.add(new JLabel("maximum falling chance "+ temp*100 + "%"));
+        temp = 0.025;
+        temp = calculateFall(temp, horse);
+        panel3.add(new JLabel("minimum falling chance "+ temp + "%"));
+        temp = 0.08;
+        temp = calculateFall(temp, horse);
+        panel3.add(new JLabel("maximum falling chance "+ temp + "%"));
         panel3.add(back);
         repaint(panel3);
-        //just display speed, stamina and the horses cooldown as the user changes the customisation
-        //so i need to pass the breed, hoof and saddle
-        //or i can obtain it by accessing the class by using .get methods
     }
 
-    private static void calculateFall(double temp, Horse horse){
+    private static double calculateFall(double temp, Horse horse){
         if (horse.getHoof() == 1) {
             temp *= 1.35;
         }
         else{
             temp *= .85;
         }
+        return temp*horse.getConfidence()*horse.getConfidence()*100;
     }
 
     private static void repaint(JPanel panel){
