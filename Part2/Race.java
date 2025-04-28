@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.lang.Math;
 import java.util.Random;
+import javax.swing.JPanel;
 
 /**
  * A three-horse race, each horse running in its own lane
@@ -18,6 +19,7 @@ public class Race
     private int season;//random season
     private double weatherChance;//chance of a weather event depends on season 
     private int weather;//final weather event
+    private JPanel panel;
 
 
     /**
@@ -27,7 +29,7 @@ public class Race
      * @param distance the length of the racetrack (in metres/yards...)
      * @param lanes the number of lanes of the racetrack
      */
-    public Race(int distance, int lanes)
+    public Race(int distance, int lanes, JPanel paneltemp)
     {
         // initialise instance variables
         raceLength = distance;
@@ -37,6 +39,7 @@ public class Race
         for (int i = 0; i < lanes; i++) {
             laneHorse[i] = null;
         }
+        panel = paneltemp;
     }
 
 
@@ -106,26 +109,6 @@ public class Race
             default:
                 theHorse.setConfidence(theHorse.getConfidence()-.15);
                 break;
-        }
-        theHorse.setRaceLength(raceLength);
-    }
-    
-
-    /**
-     * Adds a horse to the race in a given lane
-     * 
-     * @param theHorse the horse to be added to the race
-     * @param laneNumber the lane that the horse will be added to
-     */
-    public void addHorse(Horse theHorse, int laneNumber)
-    {
-
-        if (laneNumber > numberOfLanes) {
-            System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
-        }
-        else{
-            laneHorse[laneNumber-1] = theHorse;
-            confidenceChange(theHorse);
         }
     }
     
@@ -366,7 +349,7 @@ public class Race
     /***
      * Print the race on the terminal
      */
-    private void printRace()
+    public void printRace()
     {
         System.out.print('\u000C');  //clear the terminal window
         
@@ -389,7 +372,7 @@ public class Race
      * |           X                      |
      * to show how far the horse has run
      */
-    private void printLane(Horse theHorse)
+    private void printLane(Horse theHorse)//, int laneNum)
     {
         //calculate how many spaces are needed before
         //and after the horse
@@ -436,9 +419,11 @@ public class Race
         }
         else{
             System.out.print('|');
-            spacesBefore = raceLength-1;
-            System.out.print(" ");
-            multiplePrint(' ', (int) spacesBefore);
+            //every lane assigned an id
+            //add that dropdown with arraylist that holds the keys]
+            //if key picked it removes it from the list and puts it in the hashmap
+            //hashmap<horse, lanenumber>.put(horse, laneNum)
+            multiplePrint(' ', (int) raceLength);
             System.out.print("| ");
         }
     }
