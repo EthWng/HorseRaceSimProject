@@ -1,3 +1,5 @@
+package Part2;
+
 //just a temporary holder for the horse class
 class HorseInfo {
     String name;
