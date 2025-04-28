@@ -1,4 +1,4 @@
-import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +15,10 @@ public class SwingGUI {
         JFrame frame = new JFrame("Horse Race");
         frame.setSize(1280, 720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
 
         // Create the tabbed pane
         JTabbedPane tabbedPane = new JTabbedPane();
-
-        // Create a GridBagConstraints object
-        GridBagConstraints displayRace = new GridBagConstraints();
 
         // Create three panels
         JPanel panel1 = new JPanel();
@@ -133,6 +131,8 @@ public class SwingGUI {
         JTextField laneNum = new JTextField(2);
         JTextField raceLen = new JTextField(2);
         JButton showRace = new JButton("Display race");
+        ArrayList<Horse> horsesInRace = new ArrayList<Horse>();
+        ArrayList<Character> addHorse = new ArrayList<Character>();
 
         //panel2
         //if button pressed it allows the user to customise the horse they picked
@@ -208,6 +208,7 @@ public class SwingGUI {
             if (horses.get(key) == null) {
                 Horse temp = new Horse(key, horseArray[0].getName(), horseArray[0].getStats()); 
                 horses.put(key, temp);
+                addHorse.add(key);
             }
             //else it edits the existing horse
             else{
@@ -243,17 +244,27 @@ public class SwingGUI {
         //then below have one that adds the horses 
         //then a button to start the race
         panel4.add(new JLabel("Please create & customise at least 2 horses"));
-        JButton startRace = new JButton("Display race");
+        JButton startRace = new JButton("Start race");
+        Character[] horseAdd = {' '};
+        Race[] race = {new Race(10, 2)};
+        boolean[] once = {true};
         //make a drop down 1-the number of horses in hashmap
         //for the race length make the user enter a number 10-window length
 
         showRace.addActionListener(e->{
+            if (once[0]){
+                once[0] = false; 
+                horseAdd[0] = addHorse.get(0);
+            }
+
+            if (addHorse.size() > 0) {
+                //updates the arraylists
+                horsesInRace.add(horses.get(horseAdd[0]));
+                addHorse.remove(horseAdd[0]);
+            }
+
             panel4.removeAll();
-            panel4.add(new JLabel("how many lanes do you want to add"));
-            panel4.add(laneNum);
-            panel4.add(new JLabel("Long do you want to make the race"));
-            panel4.add(raceLen);
-            panel4.add(showRace);
+
             String[] raceInfo = {laneNum.getText().trim(), raceLen.getText().trim()};
             int[] raceInfoint = new int[2];//rows, length
 
@@ -271,14 +282,29 @@ public class SwingGUI {
             }
 
             if (raceInfoint[0] < 2 || raceInfoint[1] < 10 || raceInfoint[1] > 100) {
+                panel4.add(new JLabel("how many lanes do you want to add"));
+                panel4.add(laneNum);
+                panel4.add(new JLabel("Long do you want to make the race"));
+                panel4.add(raceLen);
+
                 System.out.println(Arrays.toString(raceInfoint));
                 panel4.add(new JLabel("there needs to be atleast 2 lanes"));
                 panel4.add(new JLabel("the race length must be between 10 and 100"));
+                panel4.add(showRace);
+            }
+            else if (addHorse.size() > 0){
+                race[0] = new Race(raceInfoint[1], raceInfoint[0]);
+                panel4.add(new JLabel("Which horses do you want to add?"));
+                selectId(horsesInRace, addHorse, horseAdd, panel4);
+                createRace(race[0], horsesInRace);
+                panel4.add(showRace);
+                if (horsesInRace.size() >= 2) {
+                    panel4.add(startRace);
+                }
             }
             else{
-                Race race = new Race(raceInfoint[1], raceInfoint[0], panel4);
-                race.printRace();//prints race in the terminal need to change to gui
-                //make an arraylist that holds the keys
+                createRace(race[0], horsesInRace);
+                panel4.add(showRace);
                 panel4.add(startRace);
             }
 
@@ -286,7 +312,7 @@ public class SwingGUI {
         });
 
         startRace.addActionListener(e->{
-
+            race[0].startRace();
         });
 
 
@@ -311,6 +337,36 @@ public class SwingGUI {
             stat[0] = (Character) horseID.getSelectedItem();
         });
         panel.add(horseID);
+    }
+
+    /**
+     * dropdown of all horses
+     * when a horse is added to the race they will disappear from dropdown and added to horsesinrace
+     * 
+     * @param horsesInRace horses available to add to race
+     * @param addHorse horse to add to race
+     */
+    private static void selectId(ArrayList<Horse> horsesInRace, ArrayList<Character> addHorse, Character[] horseAdd, JPanel panel){
+        horseAdd[0] = addHorse.get(0);//makes sure its not null
+        Character[] temp = new Character[addHorse.size()];
+        
+        for (int i = 0; i < temp.length; i++) {
+            temp[i] = addHorse.get(i);
+        }
+
+        JComboBox<Character> horseList = new JComboBox<>(temp);
+        horseList.addActionListener(f -> {
+            horseAdd[0] = (Character) horseList.getSelectedItem();
+        });
+        
+        panel.add(horseList);
+    }
+
+    private static void createRace(Race race, ArrayList<Horse> horsesInRace){
+        for (int i = 0; i < horsesInRace.size(); i++) {
+            race.addHorse(horsesInRace.get(i), i+1);
+        }
+        race.printRace();
     }
 
     /**
