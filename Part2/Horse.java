@@ -21,6 +21,7 @@ public class Horse
     private double staminaLose;
     private double cooldown;//constant
     private double cooldownLose;
+    private int lane;
       
     //Constructor of class Horse
     /**
@@ -30,7 +31,7 @@ public class Horse
     {
         this.symbol = horseSymbol;
         this.name = horseName;
-        this.confidence = 0.3;
+        this.confidence = 0.35;
         this.flag = false;
         this.breed = BHS[0];
         setHS(BHS[1], BHS[2]);
@@ -40,7 +41,7 @@ public class Horse
     public void fall()
     {
         this.flag = true;
-        this.confidence = Math.round((this.confidence-.1) * 100.0) / 100.0;
+        setConfidence(this.confidence-.1);
     }
     
     public double getConfidence()
@@ -84,7 +85,7 @@ public class Horse
         //horses lose stamina while moving
         if (this.staminaLose > 0){
             this.distance += this.speed;
-            this.staminaLose-=1;
+            this.staminaLose-=2;
         }
         //if horseshave no stamina then the horse will move slower and regain its stamina
         else{
@@ -110,7 +111,7 @@ public class Horse
         else{
             this.confidence = newConfidence;
         }
-        this.confidence = Math.round(this.confidence * 100.0) / 100.0;
+        this.confidence = Math.round((this.confidence) * 100.0) / 100.0;
     }
     
     public void setSymbol(char newSymbol)
@@ -170,15 +171,15 @@ public class Horse
         this.speed = 0;//reset speed
         if (this.breed == 1){
             this.speed = 1;
-            setConfidence(this.confidence+.08);
+            setConfidence(this.confidence+.1);
         }
         else if (this.breed == 2){
             this.speed = 1.2;
-            setConfidence(this.confidence+.1);
+            setConfidence(this.confidence+.15);
         }
         else{
             this.speed = 1.5;
-            setConfidence(this.confidence+.15);
+            setConfidence(this.confidence+.25);
         }
 
 
@@ -188,11 +189,11 @@ public class Horse
         //hoof can only be 1 or 2
         if (this.hoof == 2){
             this.speed *= .85;
-            setConfidence(this.confidence += .04);
+            setConfidence(this.confidence += .06);
         }
         else{
             this.speed *= 1.2;
-            setConfidence(this.confidence -= .05);
+            setConfidence(this.confidence -= .04);
         }
 
         //saddle can only be 1 or 2
@@ -204,7 +205,7 @@ public class Horse
         else{
             this.speed *=.9;
             this.stamina *= 1.15;
-            setConfidence(this.confidence += .03);
+            setConfidence(this.confidence += .05);
         }
 
         this.staminaLose = this.stamina;
