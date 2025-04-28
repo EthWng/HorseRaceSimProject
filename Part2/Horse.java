@@ -1,3 +1,5 @@
+package Part2;
+
 /**
  * The Horse class represents a horse in the race.
  * It stores the horse's name and position, and has methods to move the horse and check its status.
